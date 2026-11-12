@@ -1,0 +1,150 @@
+
+---
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = "ریاضی‌باز | آموزش ریاضی با الهه گرامی",
+  description = "آموزش مفهومی و جذاب ریاضی برای دانش‌آموزان پایه اول تا نهم .",
+  canonical,
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = "https://egrami.github.io/riazibaz";
+const pageUrl = canonical
+  ? new URL(canonical, siteUrl + "/").href
+  : Astro.url.href;
+
+const fullTitle = title.includes("ریاضی‌باز")
+  ? title
+  : `${title} | ریاضی‌باز`;
+---
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10142c" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:site_name" content="ریاضی‌باز" />
+
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <slot name="head" />
+  </head>
+
+  <body>
+    <slot />
+
+    <style is:global>
+      :root {
+        font-family: "Vazirmatn", Tahoma, sans-serif;
+        color-scheme: dark;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        --color-background: #10142c;
+        --color-surface: #191e3b;
+        --color-primary: #d8ff3e;
+        --color-secondary: #ff715b;
+        --color-purple: #a78bfa;
+        --color-cyan: #5de2e7;
+        --color-text: #ffffff;
+        --color-muted: #b9bdd3;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--color-background);
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background: var(--color-background);
+        color: var(--color-text);
+        direction: rtl;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      ::selection {
+        color: #10142c;
+        background: var(--color-primary);
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--color-primary);
+        outline-offset: 4px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </body>
+</html>
