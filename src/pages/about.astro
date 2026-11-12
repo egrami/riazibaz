@@ -1,0 +1,934 @@
+
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const highlights = [
+  {
+    number: "01",
+    title: "تحصیلات دانشگاهی",
+    description:
+      "فارغ‌التحصیل رشته ریاضی کاربردی؛ با شناخت عمیق از مفاهیم و ساختارهای ریاضی.",
+    color: "lime",
+  },
+  {
+    number: "02",
+    title: "تجربه تدریس",
+    description:
+      "تجربه آموزش ریاضی در مؤسسات آموزشی و همراهی با دانش‌آموزان در مسیر یادگیری.",
+    color: "coral",
+  },
+  {
+    number: "03",
+    title: "المپیاد ریاضی",
+    description:
+      "دارای مدال المپیاد ریاضی؛ با علاقه به تفکر تحلیلی و حل مسئله.",
+    color: "purple",
+  },
+];
+
+const principles = [
+  {
+    symbol: "✳",
+    title: "درک به‌جای حفظ کردن",
+    description:
+      "هدف این است که دانش‌آموز دلیل هر راه‌حل را بفهمد، نه اینکه فقط فرمول‌ها را حفظ کند.",
+  },
+  {
+    symbol: "↗",
+    title: "یادگیری متناسب با هر دانش‌آموز",
+    description:
+      "هر دانش‌آموز مسیر یادگیری متفاوتی دارد؛ آموزش باید با نیاز و سطح او هماهنگ باشد.",
+  },
+  {
+    symbol: "◎",
+    title: "تمرین و حل مسئله",
+    description:
+      "با تمرین هدفمند و مثال‌های متنوع، اعتمادبه‌نفس و مهارت حل مسئله تقویت می‌شود.",
+  },
+];
+---
+
+<BaseLayout
+  title="درباره الهه گرامی | ریاضی‌باز"
+  description="با الهه گرامی، مدرس ریاضی و فارغ‌التحصیل ریاضی کاربردی آشنا شوید. رویکرد آموزشی، تجربه و مسیر یادگیری در ریاضی‌باز."
+  canonical="/about/"
+>
+  <main class="about-page">
+    <header class="site-header">
+      <a class="brand" href={base}>
+        <span class="brand-icon">∑</span>
+        <span>ریاضی‌باز</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="منوی اصلی">
+        <a href={base}>صفحه اصلی</a>
+        <a class="active" href={`${base}about/`}>درباره من</a>
+        <a href={`${base}#articles`}>مقاله‌ها</a>
+      </nav>
+
+      <a class="header-cta" href="#contact-details">
+        ارتباط با من <span>↗</span>
+      </a>
+    </header>
+
+    <section class="about-hero">
+      <div class="hero-stars"></div>
+
+      <div class="hero-content">
+        <span class="eyebrow"><span></span> BEHIND THE MATH</span>
+        <h1>
+          سلام، من <span>الهه</span> هستم!
+          <br />
+          بیا ریاضی رو
+          <span class="highlight">متفاوت</span>
+          ببینیم.
+        </h1>
+        <p>
+          من معتقدم ریاضی فقط مجموعه‌ای از فرمول‌ها و عددها نیست؛
+          یک راه برای فکر کردن، کشف کردن و پیدا کردن جواب‌هاست.
+          اینجا قراره با هم مسیر یادگیری ریاضی رو ساده‌تر و لذت‌بخش‌تر کنیم.
+        </p>
+
+        <a class="hero-button" href="#my-story">
+          بیشتر با من آشنا شو
+          <span>↓</span>
+        </a>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="planet">
+          <div class="planet-ring"></div>
+          <span>∑</span>
+        </div>
+        <div class="floating-shape shape-one">π</div>
+        <div class="floating-shape shape-two">+</div>
+        <div class="floating-shape shape-three">÷</div>
+        <div class="floating-shape shape-four">√</div>
+        <div class="floating-star star-one">✦</div>
+        <div class="floating-star star-two">✧</div>
+      </div>
+    </section>
+
+    <section class="story-section" id="my-story">
+      <div class="section-heading">
+        <span class="eyebrow"><span></span> MY STORY</span>
+        <h2>کمی درباره <span>مسیر من</span></h2>
+      </div>
+
+      <div class="story-grid">
+        <div class="story-text">
+          <p>
+            ریاضی برای من همیشه چیزی فراتر از حل کردن چند مسئله بوده است.
+            پشت هر مسئله، فرصتی برای فکر کردن، تجربه کردن و رسیدن به یک
+            کشف تازه وجود دارد.
+          </p>
+          <p>
+            در مسیر تحصیل و تدریس، همیشه تلاش کرده‌ام مفاهیم ریاضی را
+            به شکلی آموزش بدهم که دانش‌آموز بتواند آن‌ها را واقعاً درک کند
+            و با اعتمادبه‌نفس از دانسته‌هایش استفاده کند.
+          </p>
+          <p>
+            در ریاضی‌باز قرار است یادگیری را از یک وظیفه سخت و خسته‌کننده
+            به تجربه‌ای قابل فهم و جذاب تبدیل کنیم.
+          </p>
+        </div>
+
+        <div class="story-note">
+          <span class="note-symbol">“</span>
+          <p>
+            قرار نیست فقط جواب مسئله‌ها را پیدا کنیم؛
+            قرار است یاد بگیریم چطور فکر کنیم.
+          </p>
+          <span class="note-decoration">THINK · EXPLORE · SOLVE</span>
+          <div class="note-star">✦</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="credentials-section">
+      <div class="section-heading centered">
+        <span class="eyebrow"><span></span> MY BACKGROUND</span>
+        <h2>مسیر علمی و <span>تجربه‌ها</span></h2>
+        <p>
+          آشنایی با پیشینه تحصیلی و تجربه‌هایی که نگاه من به آموزش ریاضی را شکل داده‌اند.
+        </p>
+      </div>
+
+      <div class="credential-grid">
+        {highlights.map((item) => (
+          <article class={`credential-card ${item.color}`}>
+            <span class="card-number">{item.number}</span>
+            <div class="card-symbol">
+              {item.number === "01" ? "∑" : item.number === "02" ? "✳" : "🏅"}
+            </div>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="method-section">
+      <div class="method-intro">
+        <span class="eyebrow"><span></span> MY TEACHING METHOD</span>
+        <h2>
+          هر دانش‌آموز،
+          <br />
+          یک <span>مسیر یادگیری</span>
+        </h2>
+        <p>
+          قرار نیست همه با یک روش و یک سرعت یاد بگیرند.
+          در آموزش ریاضی، شناخت نیازهای دانش‌آموز و پیدا کردن روش مناسب
+          برای او اهمیت زیادی دارد.
+        </p>
+      </div>
+
+      <div class="principle-list">
+        {principles.map((item, index) => (
+          <article class="principle-item">
+            <div class="principle-symbol">{item.symbol}</div>
+            <div>
+              <span class="principle-number">0{index + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="classes-section">
+      <div class="classes-decoration" aria-hidden="true">∞</div>
+      <div>
+        <span class="eyebrow"><span></span> LEARNING TOGETHER</span>
+        <h2>از اولین قدم‌ها تا مفاهیم پیچیده‌تر</h2>
+        <p>
+          آموزش ریاضی برای دانش‌آموزان پایه اول تا نهم، با توجه به سطح،
+          نیازها و شرایط یادگیری هر دانش‌آموز.
+        </p>
+      </div>
+      <div class="grade-pills">
+        <span>پایه اول تا سوم</span>
+        <span>پایه چهارم تا ششم</span>
+        <span>پایه هفتم تا نهم</span>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact-details">
+      <div class="contact-orbit" aria-hidden="true">✦</div>
+      <span class="eyebrow"><span></span> LET'S CONNECT</span>
+      <h2>آماده‌ای ریاضی رو <span>متفاوت</span> یاد بگیری؟</h2>
+      <p>
+        برای اطلاع از شرایط کلاس‌ها، شیوه برگزاری و هماهنگی جلسات
+        می‌تونی با من در ارتباط باشی.
+      </p>
+
+      <div class="contact-placeholder">
+        <span>اطلاعات تماس به‌زودی اینجا قرار می‌گیره.</span>
+        <small>شماره تماس · تلگرام · اینستاگرام</small>
+      </div>
+
+      <a class="back-home" href={base}>بازگشت به صفحه اصلی ↗</a>
+    </section>
+
+    <footer class="site-footer">
+      <a class="brand" href={base}>
+        <span class="brand-icon">∑</span>
+        <span>ریاضی‌باز</span>
+      </a>
+      <p>یادگیری ریاضی، یک ماجراجویی تازه!</p>
+      <span class="copyright">© ریاضی‌باز</span>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .about-page {
+    --lime: #d8ff3e;
+    --coral: #ff715b;
+    --purple: #a78bfa;
+    --cyan: #5de2e7;
+    overflow: hidden;
+  }
+
+  .site-header {
+    min-height: 78px;
+    padding: 0 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid #ffffff12;
+    background: #10142ceF;
+    position: relative;
+    z-index: 10;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #10142c;
+    background: var(--lime);
+    font-size: 24px;
+  }
+
+  .desktop-nav {
+    display: flex;
+    gap: 32px;
+    color: #b9bdd3;
+    font-size: 14px;
+  }
+
+  .desktop-nav a {
+    transition: color .2s;
+  }
+
+  .desktop-nav a:hover,
+  .desktop-nav a.active {
+    color: var(--lime);
+  }
+
+  .header-cta,
+  .hero-button {
+    padding: 11px 19px;
+    border-radius: 12px;
+    background: var(--lime);
+    color: #10142c;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .header-cta span {
+    margin-right: 8px;
+  }
+
+  .about-hero {
+    min-height: 540px;
+    padding: 90px 10%;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    align-items: center;
+    gap: 30px;
+    background:
+      radial-gradient(ellipse at 80% 50%, #36346b65, transparent 38%),
+      radial-gradient(ellipse at 10% 0%, #1b456055, transparent 35%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--cyan);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+  }
+
+  .eyebrow > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 12px var(--lime);
+  }
+
+  .about-hero h1 {
+    margin: 24px 0 20px;
+    font-size: clamp(32px, 4.5vw, 57px);
+    line-height: 1.65;
+    font-weight: 900;
+  }
+
+  .about-hero h1 > span:first-child,
+  .about-hero h1 .highlight {
+    color: var(--lime);
+  }
+
+  .about-hero h1 .highlight {
+    position: relative;
+  }
+
+  .about-hero p,
+  .story-text p,
+  .method-intro p,
+  .classes-section p,
+  .contact-section > p {
+    color: #b9bdd3;
+    line-height: 2.2;
+    font-size: 14px;
+  }
+
+  .about-hero p {
+    max-width: 570px;
+    margin-bottom: 30px;
+  }
+
+  .hero-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    transition: transform .2s;
+  }
+
+  .hero-button:hover {
+    transform: translateY(-4px);
+  }
+
+  .hero-art {
+    min-height: 350px;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .planet {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    position: relative;
+    z-index: 2;
+    color: #10142c;
+    font-size: 85px;
+    font-weight: 900;
+    background:
+      radial-gradient(circle at 35% 30%, #efffa1, transparent 30%),
+      linear-gradient(140deg, #d8ff3e, #8ab72c 65%, #416c37);
+    box-shadow: 0 0 70px #d8ff3e30, inset -22px -18px 35px #1b392b55;
+  }
+
+  .planet-ring {
+    position: absolute;
+    width: 290px;
+    height: 80px;
+    border: 10px solid #a78bfa;
+    border-radius: 50%;
+    transform: rotate(-24deg);
+    box-shadow: 0 0 18px #a78bfa55;
+  }
+
+  .orbit {
+    position: absolute;
+    border: 1px solid #ffffff25;
+    border-radius: 50%;
+  }
+
+  .orbit-one {
+    width: 340px;
+    height: 340px;
+  }
+
+  .orbit-two {
+    width: 420px;
+    height: 230px;
+    transform: rotate(45deg);
+  }
+
+  .floating-shape,
+  .floating-star {
+    position: absolute;
+    z-index: 3;
+    font-weight: 900;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .floating-shape {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 27px;
+    color: #10142c;
+  }
+
+  .shape-one {
+    top: 10%;
+    right: 15%;
+    background: var(--coral);
+  }
+
+  .shape-two {
+    bottom: 12%;
+    right: 12%;
+    background: var(--cyan);
+    animation-delay: .5s;
+  }
+
+  .shape-three {
+    top: 25%;
+    left: 8%;
+    background: var(--purple);
+    animation-delay: 1s;
+  }
+
+  .shape-four {
+    bottom: 15%;
+    left: 18%;
+    background: var(--lime);
+    animation-delay: 1.5s;
+  }
+
+  .floating-star {
+    color: var(--lime);
+    font-size: 30px;
+  }
+
+  .star-one { top: 8%; left: 35%; }
+  .star-two { bottom: 5%; right: 42%; color: var(--coral); }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-13px) rotate(8deg); }
+  }
+
+  .story-section,
+  .credentials-section,
+  .method-section {
+    padding: 100px 10%;
+  }
+
+  .story-section {
+    background: #151a35;
+  }
+
+  .section-heading h2,
+  .method-intro h2 {
+    margin: 15px 0;
+    font-size: clamp(27px, 3vw, 39px);
+    font-weight: 900;
+  }
+
+  .section-heading h2 span,
+  .method-intro h2 span {
+    color: var(--lime);
+  }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    align-items: center;
+    gap: 70px;
+    margin-top: 40px;
+  }
+
+  .story-text p {
+    margin: 0 0 18px;
+  }
+
+  .story-note {
+    position: relative;
+    min-height: 240px;
+    padding: 38px;
+    border: 1px solid #a78bfa55;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #a78bfa18, #191e3b);
+    overflow: hidden;
+  }
+
+  .note-symbol {
+    color: var(--purple);
+    font-family: Georgia, serif;
+    font-size: 70px;
+    line-height: 1;
+  }
+
+  .story-note p {
+    max-width: 360px;
+    font-size: 22px;
+    line-height: 2;
+    font-weight: 800;
+  }
+
+  .note-decoration {
+    color: var(--purple);
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 900;
+  }
+
+  .note-star {
+    position: absolute;
+    bottom: -35px;
+    left: 5px;
+    color: #a78bfa20;
+    font-size: 150px;
+  }
+
+  .credentials-section {
+    background:
+      radial-gradient(ellipse at 50% 0%, #2b345c55, transparent 50%);
+  }
+
+  .centered {
+    text-align: center;
+  }
+
+  .centered > p {
+    color: #b9bdd3;
+    font-size: 14px;
+  }
+
+  .credential-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+  }
+
+  .credential-card {
+    min-height: 270px;
+    padding: 27px;
+    border: 1px solid #ffffff15;
+    border-radius: 22px;
+    background: #191e3b;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, border-color .25s;
+  }
+
+  .credential-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .credential-card.lime:hover { border-color: var(--lime); }
+  .credential-card.coral:hover { border-color: var(--coral); }
+  .credential-card.purple:hover { border-color: var(--purple); }
+
+  .card-number {
+    color: #ffffff45;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .card-symbol {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    margin: 25px 0 18px;
+    border-radius: 17px;
+    background: #d8ff3e20;
+    color: var(--lime);
+    font-size: 30px;
+  }
+
+  .coral .card-symbol {
+    color: var(--coral);
+    background: #ff715b20;
+  }
+
+  .purple .card-symbol {
+    color: var(--purple);
+    background: #a78bfa20;
+  }
+
+  .credential-card h3,
+  .principle-item h3 {
+    margin: 0 0 10px;
+    font-size: 17px;
+  }
+
+  .credential-card p,
+  .principle-item p {
+    margin: 0;
+    color: #b9bdd3;
+    font-size: 13px;
+    line-height: 2.1;
+  }
+
+  .method-section {
+    display: grid;
+    grid-template-columns: .85fr 1.15fr;
+    gap: 70px;
+    background: #151a35;
+  }
+
+  .method-intro {
+    position: sticky;
+    top: 40px;
+    align-self: start;
+  }
+
+  .principle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .principle-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 24px;
+    border: 1px solid #ffffff12;
+    border-radius: 20px;
+    background: #191e3b;
+  }
+
+  .principle-symbol {
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    background: #d8ff3e20;
+    color: var(--lime);
+    font-size: 27px;
+  }
+
+  .principle-number {
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+
+  .principle-item h3 {
+    margin-top: 5px;
+  }
+
+  .classes-section {
+    margin: 90px 10%;
+    padding: 45px;
+    border: 1px solid #5de2e733;
+    border-radius: 28px;
+    background: linear-gradient(120deg, #1b3c50, #191e3b 65%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .classes-section h2 {
+    max-width: 600px;
+    font-size: clamp(25px, 3vw, 36px);
+    line-height: 1.7;
+  }
+
+  .classes-section p {
+    max-width: 650px;
+  }
+
+  .grade-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .grade-pills span {
+    padding: 10px 16px;
+    border: 1px solid #5de2e755;
+    border-radius: 50px;
+    color: var(--cyan);
+    font-size: 12px;
+  }
+
+  .classes-decoration {
+    position: absolute;
+    left: 35px;
+    top: -35px;
+    color: #5de2e711;
+    font-size: 240px;
+    font-weight: 900;
+    pointer-events: none;
+  }
+
+  .contact-section {
+    margin: 0;
+    padding: 100px 10%;
+    text-align: center;
+    position: relative;
+    background:
+      radial-gradient(ellipse at 50% 100%, #36346b70, transparent 55%);
+  }
+
+  .contact-section h2 {
+    max-width: 750px;
+    margin: 20px auto;
+    font-size: clamp(27px, 4vw, 43px);
+    line-height: 1.7;
+  }
+
+  .contact-section h2 span {
+    color: var(--lime);
+  }
+
+  .contact-section > p {
+    max-width: 600px;
+    margin: 0 auto 28px;
+  }
+
+  .contact-placeholder {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 25px;
+    padding: 18px 25px;
+    border: 1px dashed #ffffff45;
+    border-radius: 15px;
+    color: #ffffff;
+    background: #191e3b;
+  }
+
+  .contact-placeholder small {
+    display: block;
+    margin-top: 8px;
+    color: #9ca3bd;
+    font-size: 11px;
+  }
+
+  .back-home {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--lime);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .contact-orbit {
+    position: absolute;
+    top: 40px;
+    left: 12%;
+    color: var(--purple);
+    font-size: 35px;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .site-footer {
+    min-height: 100px;
+    padding: 25px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid #ffffff15;
+  }
+
+  .site-footer p,
+  .copyright {
+    color: #9298b1;
+    font-size: 12px;
+  }
+
+  @media (max-width: 800px) {
+    .site-header {
+      padding: 15px 5%;
+    }
+
+    .desktop-nav {
+      display: none;
+    }
+
+    .about-hero {
+      grid-template-columns: 1fr;
+      padding: 70px 7% 35px;
+      text-align: center;
+    }
+
+    .about-hero p {
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .hero-art {
+      min-height: 300px;
+    }
+
+    .story-section,
+    .credentials-section,
+    .method-section {
+      padding: 70px 7%;
+    }
+
+    .story-grid,
+    .method-section {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+
+    .credential-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .credential-card {
+      min-height: 230px;
+    }
+
+    .method-intro {
+      position: static;
+    }
+
+    .classes-section {
+      margin: 60px 5%;
+      padding: 30px 25px;
+    }
+
+    .contact-section {
+      padding: 75px 7%;
+    }
+
+    .site-footer {
+      flex-wrap: wrap;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .site-footer .brand {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .header-cta {
+      padding: 10px 12px;
+      font-size: 11px;
+    }
+
+    .brand {
+      font-size: 17px;
+    }
+
+    .hero-art {
+      transform: scale(.85);
+      margin: -15px 0;
+    }
+
+    .story-note {
+      padding: 25px;
+    }
+
+    .principle-item {
+      padding: 18px;
+      gap: 14px;
+    }
+
+    .principle-symbol {
+      flex-basis: 44px;
+      width: 44px;
+      height: 44px;
+    }
+  }
+</style>
