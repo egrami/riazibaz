@@ -1,0 +1,664 @@
+
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const articles = (await getCollection("articles"))
+  .filter((article) => !article.data.draft)
+  .sort(
+    (a, b) =>
+      b.data.pubDate.getTime() - a.data.pubDate.getTime()
+  );
+
+const categories = [
+  "همه مقاله‌ها",
+  "یادگیری ریاضی",
+  "راهنمای والدین",
+  "راهنمای دانش‌آموزان",
+];
+
+const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout
+  title="مقاله‌های آموزش ریاضی | ریاضی‌باز"
+  description="مجموعه مقاله‌های آموزشی ریاضی برای دانش‌آموزان و والدین؛ راهکارهای یادگیری، تمرین و تقویت مهارت حل مسئله."
+  canonical="/articles/"
+>
+  <main class="archive-page">
+    <header class="site-header">
+      <a class="brand" href={base}>
+        <span class="brand-icon">∑</span>
+        <span>ریاضی‌باز</span>
+      </a>
+
+      <nav>
+        <a href={base}>صفحه اصلی</a>
+        <a href={`${base}about/`}>درباره من</a>
+        <a class="active" href={`${base}articles/`}>مقاله‌ها</a>
+      </nav>
+
+      <a class="header-cta" href={`${base}about/#contact-details`}>
+        ارتباط با من ↗
+      </a>
+    </header>
+
+    <section class="archive-hero">
+      <div class="hero-decoration decoration-one">π</div>
+      <div class="hero-decoration decoration-two">÷</div>
+      <div class="hero-decoration decoration-three">✦</div>
+
+      <span class="eyebrow"><span></span> MATH KNOWLEDGE HUB</span>
+      <h1>
+        دنیای ریاضی،
+        <br />
+        پر از <span>کشف‌های تازه</span> است!
+      </h1>
+      <p>
+        اینجا درباره یادگیری بهتر ریاضی، روش‌های مطالعه و چالش‌های دانش‌آموزان
+        صحبت می‌کنیم. شاید جواب سؤال بعدی تو همین‌جا باشد!
+      </p>
+
+      <div class="article-count">
+        <strong>{articles.length.toLocaleString("fa-IR")}</strong>
+        <span>مقاله منتشرشده</span>
+      </div>
+    </section>
+
+    <section class="articles-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow"><span></span> EXPLORE ARTICLES</span>
+          <h2>کتابخانه <span>یادگیری</span></h2>
+        </div>
+        <p>موضوع مورد علاقه‌ات را انتخاب کن و شروع به خواندن کن.</p>
+      </div>
+
+      <div class="category-list" aria-label="فیلتر دسته‌بندی مقاله‌ها">
+        {categories.map((category, index) => (
+          <button
+            class:list={["category-button", { selected: index === 0 }]}
+            type="button"
+            data-category={category}
+            aria-pressed={index === 0 ? "true" : "false"}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {articles.length > 0 ? (
+        <div class="article-grid" id="article-grid">
+          {articles.map((article, index) => (
+            <article
+              class="article-card"
+              data-category={article.data.category}
+            >
+              <a
+                class="card-link"
+                href={`${base}articles/${article.id}/`}
+                aria-label={`مطالعه ${article.data.title}`}
+              >
+                <div class={`card-art art-${index % 3}`}>
+                  {article.data.cover ? (
+                    <img
+                      src={
+                        article.data.cover.startsWith("/")
+                          ? `${base}${article.data.cover.slice(1)}`
+                          : article.data.cover
+                      }
+                      alt={article.data.title}
+                    />
+                  ) : (
+                    <span class="art-symbol">
+                      {index % 3 === 0 ? "∑" : index % 3 === 1 ? "π" : "√"}
+                    </span>
+                  )}
+                  <span class="art-category">{article.data.category}</span>
+                </div>
+
+                <div class="card-content">
+                  <span class="card-date">
+                    {dateFormatter.format(article.data.pubDate)}
+                  </span>
+
+                  <h3>{article.data.title}</h3>
+                  <p>{article.data.description}</p>
+
+                  <span class="read-more">
+                    ادامه مطلب <span>←</span>
+                  </span>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <span>✧</span>
+          <h3>به‌زودی اینجا پر از مقاله می‌شود!</h3>
+          <p>
+            هنوز مقاله‌ای منتشر نشده؛ اما ماجراجویی یادگیری به‌زودی شروع می‌شود.
+          </p>
+        </div>
+      )}
+
+      <div class="no-results" id="no-results" hidden>
+        مقاله‌ای در این دسته‌بندی پیدا نشد.
+      </div>
+    </section>
+
+    <section class="archive-cta">
+      <span class="eyebrow"><span></span> KEEP LEARNING</span>
+      <h2>یادگیری با یک سؤال شروع می‌شود!</h2>
+      <p>اگر درباره کلاس‌ها یا روش آموزش سؤالی داری، با من در ارتباط باش.</p>
+      <a href={`${base}about/#contact-details`}>ارتباط با الهه ↗</a>
+    </section>
+
+    <footer class="site-footer">
+      <a class="brand" href={base}>
+        <span class="brand-icon">∑</span>
+        <span>ریاضی‌باز</span>
+      </a>
+      <p>یادگیری ریاضی، یک ماجراجویی تازه!</p>
+      <span>© ریاضی‌باز</span>
+    </footer>
+  </main>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(
+    ".category-button"
+  );
+
+  const cards = document.querySelectorAll<HTMLElement>(".article-card");
+  const noResults = document.querySelector<HTMLElement>("#no-results");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selectedCategory = button.dataset.category;
+
+      buttons.forEach((item) => {
+        item.classList.remove("selected");
+        item.setAttribute("aria-pressed", "false");
+      });
+
+      button.classList.add("selected");
+      button.setAttribute("aria-pressed", "true");
+
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const matches =
+          selectedCategory === "همه مقاله‌ها" ||
+          card.dataset.category === selectedCategory;
+
+        card.hidden = !matches;
+
+        if (matches) visibleCount++;
+      });
+
+      if (noResults) {
+        noResults.hidden = visibleCount !== 0;
+      }
+    });
+  });
+</script>
+
+<style>
+  .archive-page {
+    overflow: hidden;
+  }
+
+  .site-header {
+    min-height: 78px;
+    padding: 0 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid #ffffff12;
+    background: #10142cef;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    color: #10142c;
+    background: #d8ff3e;
+    font-size: 24px;
+  }
+
+  nav {
+    display: flex;
+    gap: 30px;
+    color: #b9bdd3;
+    font-size: 14px;
+  }
+
+  nav a:hover,
+  nav a.active {
+    color: #d8ff3e;
+  }
+
+  .header-cta {
+    padding: 11px 18px;
+    border-radius: 12px;
+    background: #d8ff3e;
+    color: #10142c;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .archive-hero {
+    min-height: 430px;
+    padding: 85px 10%;
+    position: relative;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at 50% 80%, #39356865, transparent 55%),
+      radial-gradient(ellipse at 15% 10%, #1b456055, transparent 40%);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #5de2e7;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+  }
+
+  .eyebrow > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d8ff3e;
+    box-shadow: 0 0 12px #d8ff3e;
+  }
+
+  .archive-hero h1 {
+    margin: 20px auto;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.7;
+    font-weight: 900;
+  }
+
+  .archive-hero h1 span,
+  .section-heading h2 span {
+    color: #d8ff3e;
+  }
+
+  .archive-hero > p {
+    max-width: 600px;
+    margin: 0 auto;
+    color: #b9bdd3;
+    font-size: 14px;
+    line-height: 2.2;
+  }
+
+  .article-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+    padding: 9px 17px;
+    border: 1px solid #ffffff20;
+    border-radius: 40px;
+    background: #ffffff08;
+    color: #b9bdd3;
+    font-size: 12px;
+  }
+
+  .article-count strong {
+    color: #d8ff3e;
+    font-size: 18px;
+  }
+
+  .hero-decoration {
+    position: absolute;
+    color: #ffffff12;
+    font-size: 75px;
+    font-weight: 900;
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .decoration-one {
+    top: 15%;
+    right: 12%;
+    color: #ff715b55;
+  }
+
+  .decoration-two {
+    bottom: 15%;
+    left: 12%;
+    color: #a78bfa55;
+    animation-delay: 1s;
+  }
+
+  .decoration-three {
+    top: 25%;
+    left: 20%;
+    color: #d8ff3e55;
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  .articles-section {
+    padding: 85px 10%;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .section-heading h2 {
+    margin: 12px 0 0;
+    font-size: clamp(26px, 3vw, 36px);
+  }
+
+  .section-heading > p {
+    color: #9298b1;
+    font-size: 13px;
+  }
+
+  .category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 35px;
+  }
+
+  .category-button {
+    padding: 10px 17px;
+    border: 1px solid #ffffff20;
+    border-radius: 30px;
+    background: transparent;
+    color: #b9bdd3;
+    font-size: 12px;
+    transition: .2s;
+  }
+
+  .category-button:hover {
+    border-color: #d8ff3e80;
+    color: #d8ff3e;
+  }
+
+  .category-button.selected {
+    border-color: #d8ff3e;
+    background: #d8ff3e;
+    color: #10142c;
+    font-weight: 900;
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .article-card {
+    min-width: 0;
+    border: 1px solid #ffffff15;
+    border-radius: 20px;
+    background: #191e3b;
+    overflow: hidden;
+    transition: transform .25s, border-color .25s;
+  }
+
+  .article-card:hover {
+    transform: translateY(-7px);
+    border-color: #d8ff3e70;
+  }
+
+  .article-card[hidden] {
+    display: none;
+  }
+
+  .card-link {
+    display: block;
+    height: 100%;
+  }
+
+  .card-art {
+    height: 180px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .art-0 {
+    background: radial-gradient(circle, #4c653d, #23334a);
+  }
+
+  .art-1 {
+    background: radial-gradient(circle, #554478, #242c4c);
+  }
+
+  .art-2 {
+    background: radial-gradient(circle, #6c493d, #29334e);
+  }
+
+  .card-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .art-symbol {
+    color: #ffffffcc;
+    font-size: 90px;
+    font-weight: 900;
+    text-shadow: 0 0 35px #ffffff40;
+  }
+
+  .art-category {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    padding: 7px 12px;
+    border: 1px solid #ffffff35;
+    border-radius: 30px;
+    background: #10142cbf;
+    color: #d8ff3e;
+    font-size: 10px;
+  }
+
+  .card-content {
+    padding: 22px;
+  }
+
+  .card-date {
+    color: #9298b1;
+    font-size: 11px;
+  }
+
+  .card-content h3 {
+    margin: 12px 0;
+    font-size: 17px;
+    line-height: 1.9;
+  }
+
+  .card-content p {
+    min-height: 65px;
+    margin: 0;
+    color: #b9bdd3;
+    font-size: 12px;
+    line-height: 2.1;
+  }
+
+  .read-more {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 22px;
+    color: #d8ff3e;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .read-more span {
+    font-size: 18px;
+    transition: transform .2s;
+  }
+
+  .article-card:hover .read-more span {
+    transform: translateX(-5px);
+  }
+
+  .empty-state,
+  .no-results {
+    padding: 70px 20px;
+    border: 1px dashed #ffffff30;
+    border-radius: 22px;
+    text-align: center;
+    color: #b9bdd3;
+  }
+
+  .empty-state > span {
+    color: #d8ff3e;
+    font-size: 45px;
+  }
+
+  .empty-state h3 {
+    color: #ffffff;
+    font-size: 20px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .no-results[hidden] {
+    display: none;
+  }
+
+  .archive-cta {
+    margin: 0 10% 85px;
+    padding: 55px 25px;
+    border: 1px solid #a78bfa40;
+    border-radius: 25px;
+    text-align: center;
+    background: linear-gradient(120deg, #292448, #191e3b);
+  }
+
+  .archive-cta h2 {
+    font-size: clamp(24px, 3vw, 34px);
+  }
+
+  .archive-cta p {
+    color: #b9bdd3;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .archive-cta > a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #d8ff3e;
+    color: #10142c;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .site-footer {
+    min-height: 95px;
+    padding: 20px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid #ffffff15;
+    color: #9298b1;
+    font-size: 12px;
+  }
+
+  .site-footer p {
+    margin: 0;
+  }
+
+  @media (max-width: 850px) {
+    .article-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 650px) {
+    .site-header {
+      padding: 15px 5%;
+    }
+
+    nav {
+      display: none;
+    }
+
+    .archive-hero {
+      padding: 70px 7%;
+    }
+
+    .articles-section {
+      padding: 65px 6%;
+    }
+
+    .section-heading {
+      display: block;
+    }
+
+    .section-heading > p {
+      margin-top: 15px;
+    }
+
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-art {
+      height: 210px;
+    }
+
+    .archive-cta {
+      margin: 0 5% 60px;
+    }
+
+    .site-footer {
+      flex-wrap: wrap;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .site-footer .brand {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
