@@ -17,6 +17,12 @@ const methods = [
   { icon: "🎯", title: "متناسب با هر دانش‌آموز", text: "روش آموزش رو با نیازها، توانایی‌ها و سرعت یادگیری هر دانش‌آموز هماهنگ می‌کنیم." },
 ];
 
+const teachingStats = [
+  { number: "۴ سال", label: "سابقه تدریس در آموزش‌وپرورش" },
+  { number: "۱۰ سال", label: "سابقه تدریس خصوصی" },
+  { number: "+۵۰", label: "دانش‌آموز در کلاس‌های خصوصی" },
+];
+
 const articles = (await getCollection("articles"))
   .filter((article) => !article.data.draft)
   .sort(
@@ -41,7 +47,7 @@ const articles = (await getCollection("articles"))
     <header class="header">
       <a href={base} class="brand" aria-label="صفحه اصلی ریاضی‌باز">
         <span class="brand-symbol">∑</span>
-        <span>ریاضی‌باز<span class="brand-dot">.</span></span>
+        <span>ریاضی‌باز<span class="brand-dot"></span></span>
       </a>
 
       <nav class="navigation">
@@ -189,11 +195,22 @@ const articles = (await getCollection("articles"))
             فارغ‌التحصیل رشته ریاضی کاربردی و همراه شما در مسیر یادگیری ریاضی.
             باور دارم هر دانش‌آموز می‌تونه ریاضی رو بفهمه؛ فقط باید راه درست یادگیری خودش رو پیدا کنه.
           </p>
-          <div class="teacher-tags">
-            <span>ریاضی کاربردی</span>
-            <span>سابقه تدریس</span>
-            <span>المپیاد ریاضی</span>
+
+          <div class="teacher-stats">
+            {teachingStats.map((stat) => (
+              <div class="teacher-stat">
+                <strong>{stat.number}</strong>
+                <span>{stat.label}</span>
+              </div>
+            ))}
           </div>
+
+          <div class="teacher-tags">
+            <span>کلاس خصوصی تک‌نفره</span>
+            <span>کلاس گروهی</span>
+            <span>پایه‌های اول تا نهم</span>
+          </div>
+
           <a href={`${base}about/`} class="primary-button teacher-button">بیشتر با من آشنا شو <span>←</span></a>
         </div>
       </section>
@@ -403,6 +420,34 @@ const articles = (await getCollection("articles"))
     .teacher-small-symbol { position: absolute; bottom: 35px; left: 35px; color: #a78bfa; font-size: 28px; }
     .teacher-caption { position: absolute; bottom: 0; font-size: 9px; letter-spacing: 3px; color: #858eaf; }
     .teacher-copy h2 { margin: 15px 0; }
+
+    .teacher-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 25px 0 20px;
+    }
+    .teacher-stat {
+      min-width: 0;
+      padding: 15px 12px;
+      border: 1px solid #454d70;
+      border-radius: 12px;
+      background: #202747;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .teacher-stat strong {
+      color: #d8ff3e;
+      font-size: 25px;
+      font-weight: 900;
+    }
+    .teacher-stat span {
+      color: #c4c9de;
+      font-size: 10px;
+      line-height: 1.9;
+    }
+
     .teacher-tags { display: flex; flex-wrap: wrap; gap: 9px; margin: 23px 0; }
     .teacher-tags span { border: 1px solid #454d70; border-radius: 50px; padding: 8px 13px; font-size: 10px; color: #c4c9de; }
     .teacher-button { margin-top: 10px; }
@@ -493,6 +538,7 @@ const articles = (await getCollection("articles"))
       .hero-copy { width: 100%; }
       .hero h1 { font-size: clamp(38px, 10vw, 53px); }
       .hero-description { font-size: 12px; }
+      .hero-actions { flex-wrap: wrap; }
       .hero-art { width: 100%; height: auto; min-height: 290px; margin: 5px 0 -15px; transform: none; }
       .astronaut-image { width: min(100%, 330px); max-height: 330px; }
       .astronaut-glow { width: min(90%, 290px); }
@@ -509,6 +555,9 @@ const articles = (await getCollection("articles"))
       .method-icon { width: 40px; height: 40px; }
       .teacher-visual { min-height: 285px; }
       .teacher-circle { transform: scale(.85); }
+      .teacher-stats { grid-template-columns: 1fr; gap: 10px; }
+      .teacher-stat { flex-direction: row; align-items: center; justify-content: space-between; gap: 15px; }
+      .teacher-stat strong { flex-shrink: 0; }
       .article-cover { height: 200px; }
       .contact-section h2 { font-size: 36px; }
       .footer { flex-wrap: wrap; justify-content: center; text-align: center; }
