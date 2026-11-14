@@ -1,6 +1,7 @@
 
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
 const base = import.meta.env.BASE_URL;
 
@@ -16,11 +17,20 @@ const methods = [
   { icon: "🎯", title: "متناسب با هر دانش‌آموز", text: "روش آموزش رو با نیازها، توانایی‌ها و سرعت یادگیری هر دانش‌آموز هماهنگ می‌کنیم." },
 ];
 
-const articles = [
-  { category: "یادگیری ریاضی", title: "چطور به فرزندمان کمک کنیم ریاضی را بهتر یاد بگیرد؟", slug: "help-child-learn-math", color: "article-one", symbol: "＋" },
-  { category: "راهنمای دانش‌آموزان", title: "چرا بعضی از مسائل ریاضی سخت به نظر می‌رسند؟", slug: "why-math-feels-hard", color: "article-two", symbol: "÷" },
-  { category: "راهنمای والدین", title: "چطور جدول ضرب را بهتر و راحت‌تر یاد بگیریم؟", slug: "learn-multiplication-table", color: "article-three", symbol: "×" },
-];
+const articles = (await getCollection("articles"))
+  .filter((article) => !article.data.draft)
+  .sort(
+    (a, b) =>
+      b.data.pubDate.getTime() - a.data.pubDate.getTime()
+  )
+  .slice(0, 3)
+  .map((article, index) => ({
+    category: article.data.category,
+    title: article.data.title,
+    slug: article.id,
+    color: ["article-one", "article-two", "article-three"][index % 3],
+    symbol: ["＋", "÷", "×"][index % 3],
+  }));
 ---
 
 <BaseLayout
@@ -213,22 +223,30 @@ const articles = [
           <p>اینجا کلی ایده و راهکار برای یادگیری بهتر ریاضی پیدا می‌کنی.</p>
         </div>
 
-        <div class="article-grid">
-          {articles.map((article, index) => (
-            <a href={`${base}articles/${article.slug}/`} class="article-card">
-              <div class={`article-cover ${article.color}`}>
-                <span class="article-symbol">{article.symbol}</span>
-                <span class="article-cover-index">ARTICLE / 0{index + 1}</span>
-                <span class="article-cover-star">✦</span>
-              </div>
-              <div class="article-info">
-                <span class="article-category">{article.category}</span>
-                <h3>{article.title}</h3>
-                <span class="article-read">مطالعه مقاله <span>←</span></span>
-              </div>
-            </a>
-          ))}
-        </div>
+        {articles.length > 0 ? (
+          <div class="article-grid">
+            {articles.map((article, index) => (
+              <a href={`${base}articles/${article.slug}/`} class="article-card">
+                <div class={`article-cover ${article.color}`}>
+                  <span class="article-symbol">{article.symbol}</span>
+                  <span class="article-cover-index">ARTICLE / 0{index + 1}</span>
+                  <span class="article-cover-star">✦</span>
+                </div>
+                <div class="article-info">
+                  <span class="article-category">{article.category}</span>
+                  <h3>{article.title}</h3>
+                  <span class="article-read">مطالعه مقاله <span>←</span></span>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="articles-empty">به‌زودی مقاله‌های جدید منتشر می‌شوند!</p>
+        )}
+
+        <a href={`${base}articles/`} class="articles-archive-link">
+          مشاهده همه مقاله‌ها <span>←</span>
+        </a>
       </section>
 
       <section class="contact-section section-pad" id="contact">
@@ -411,6 +429,30 @@ const articles = [
     .article-info h3 { font-size: 14px; line-height: 2; min-height: 55px; margin: 12px 0 18px; }
     .article-read { display: flex; justify-content: space-between; border-top: 1px solid #343b5a; padding-top: 14px; font-size: 10px; color: #aeb4cd; }
     .article-read span { color: #d8ff3e; }
+
+    .articles-archive-link {
+      display: flex;
+      width: fit-content;
+      align-items: center;
+      gap: 18px;
+      margin: 35px auto 0;
+      padding: 13px 22px;
+      border: 1px solid #d8ff3e70;
+      border-radius: 10px;
+      color: #d8ff3e;
+      font-size: 13px;
+      font-weight: 800;
+      transition: .25s;
+    }
+    .articles-archive-link:hover {
+      background: #d8ff3e;
+      color: #10142c;
+    }
+    .articles-empty {
+      color: #aeb4cd;
+      text-align: center;
+      padding: 30px;
+    }
 
     .contact-section { position: relative; text-align: center; overflow: hidden; background: radial-gradient(ellipse at center, #30385d, #191e3c 65%, #10142c); }
     .contact-section h2 { font-size: clamp(34px, 5vw, 55px); line-height: 1.65; margin: 20px 0; font-weight: 900; }
