@@ -94,33 +94,17 @@ const articles = (await getCollection("articles"))
           </div>
         </div>
 
-        <div class="hero-art" aria-label="تصویرسازی فضایی ریاضی‌باز">
-          <div class="planet-ring"></div>
-          <div class="planet">
-            <div class="planet-land land-one"></div>
-            <div class="planet-land land-two"></div>
-            <div class="planet-land land-three"></div>
-            <div class="planet-shine"></div>
-          </div>
-
-          <div class="moon"></div>
-          <div class="floating-symbol symbol-plus">＋</div>
-          <div class="floating-symbol symbol-pi">π</div>
-          <div class="floating-symbol symbol-root">√</div>
-          <div class="floating-star star-a">✦</div>
-          <div class="floating-star star-b">✧</div>
-          <div class="floating-star star-c">✦</div>
-
-          <div class="rocket">
-            <div class="rocket-fin fin-left"></div>
-            <div class="rocket-fin fin-right"></div>
-            <div class="rocket-body">
-              <div class="rocket-window"></div>
-              <div class="rocket-line"></div>
-            </div>
-            <div class="rocket-flame"></div>
-          </div>
-
+        <div class="hero-art" aria-label="پسرک فضانورد ریاضی‌باز">
+          <div class="astronaut-glow"></div>
+          <div class="astronaut-orbit"></div>
+          <img
+            class="astronaut-image"
+            src={`${base}images/boy-astronaut.webp`}
+            alt="پسرک فضانورد ریاضی‌باز در حال ماجراجویی"
+            width="1536"
+            height="1536"
+            fetchpriority="high"
+          />
           <div class="art-label">
             <span class="label-dot"></span>
             MATH EXPLORER
@@ -329,36 +313,46 @@ const articles = (await getCollection("articles"))
     .hero-note { display: flex; align-items: center; gap: 10px; margin-top: 35px; color: #9299b7; font-size: 11px; }
     .note-icon { color: #ff715b; font-size: 20px; }
 
-    .hero-art { height: 440px; position: relative; z-index: 2; }
-    .planet-ring { position: absolute; width: 370px; height: 370px; border: 1px solid #747ca4; border-radius: 50%; top: 30px; left: 50%; transform: translateX(-50%) rotate(-23deg) scaleY(.43); opacity: .65; }
-    .planet {
-      position: absolute; width: 275px; height: 275px; border-radius: 50%; top: 70px; left: 50%; transform: translateX(-50%);
-      overflow: hidden; background: radial-gradient(circle at 30% 23%, #7de5e8 0%, #4e91c6 30%, #34539a 67%, #18234e 100%);
-      box-shadow: inset -30px -22px 45px #0b133b, 0 0 70px #6687ef33;
+    .hero-art {
+      height: 440px;
+      min-width: 0;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      isolation: isolate;
     }
-    .planet-land { position: absolute; background: #83c77d; opacity: .85; filter: drop-shadow(0 3px 2px #174b64); }
-    .land-one { width: 90px; height: 75px; top: 48px; left: 45px; border-radius: 63% 37% 42% 58% / 37% 45% 55% 63%; transform: rotate(-22deg); }
-    .land-two { width: 68px; height: 100px; top: 120px; left: 145px; border-radius: 45% 55% 60% 40%; transform: rotate(25deg); }
-    .land-three { width: 40px; height: 33px; top: 30px; right: 30px; border-radius: 60%; }
-    .planet-shine { position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(115deg, #ffffff40, transparent 38%); }
-    .moon { position: absolute; top: 38px; right: 50px; width: 48px; height: 48px; background: #f2d99c; border-radius: 50%; box-shadow: 0 0 30px #f2d99c66; }
-    .floating-symbol { position: absolute; z-index: 3; font-weight: 900; animation: float 5s ease-in-out infinite; }
-    .symbol-plus { top: 72px; left: 55px; font-size: 42px; color: #d8ff3e; }
-    .symbol-pi { bottom: 100px; right: 30px; font-size: 36px; color: #ff715b; animation-delay: -2s; }
-    .symbol-root { top: 230px; left: 22px; font-size: 38px; color: #b59cff; animation-delay: -1s; }
-    .floating-star { position: absolute; color: #fff; }
-    .star-a { top: 20px; left: 45%; font-size: 22px; }
-    .star-b { bottom: 30px; left: 37%; color: #d8ff3e; font-size: 30px; }
-    .star-c { top: 155px; right: 15px; color: #ff715b; font-size: 20px; }
-    .rocket { position: absolute; width: 90px; height: 160px; left: 65%; top: 160px; z-index: 4; transform: rotate(35deg); animation: rocketFloat 5s ease-in-out infinite; }
-    .rocket-body { position: absolute; width: 61px; height: 115px; top: 0; left: 15px; background: linear-gradient(90deg, #cbd5ef, #fff 48%, #9ca9d1); border-radius: 55% 55% 25% 25%; border: 2px solid #8795bd; }
-    .rocket-body:before { content: ""; position: absolute; top: -3px; left: 17px; width: 23px; height: 22px; background: #ff715b; border-radius: 50% 50% 5px 5px; }
-    .rocket-window { position: absolute; width: 27px; height: 27px; top: 37px; left: 15px; border: 5px solid #d8ff3e; border-radius: 50%; background: #386d9e; }
-    .rocket-line { position: absolute; width: 100%; height: 5px; background: #ff715b; top: 83px; }
-    .rocket-fin { position: absolute; bottom: 24px; width: 28px; height: 48px; background: #ff715b; z-index: -1; }
-    .fin-left { left: 0; border-radius: 100% 0 0 10%; transform: skewY(22deg); }
-    .fin-right { right: 0; border-radius: 0 100% 10% 0; transform: skewY(-22deg); }
-    .rocket-flame { position: absolute; width: 23px; height: 57px; left: 34px; bottom: -49px; background: linear-gradient(#d8ff3e, #ff715b, transparent); border-radius: 50%; filter: blur(2px); }
+    .astronaut-glow {
+      position: absolute;
+      width: min(85%, 390px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, #a78bfa30 0%, #5de2e720 42%, transparent 72%);
+      filter: blur(12px);
+      z-index: -1;
+    }
+    .astronaut-orbit {
+      position: absolute;
+      width: min(88%, 390px);
+      aspect-ratio: 1;
+      border: 1px solid #747ca455;
+      border-radius: 50%;
+      transform: rotate(-22deg) scaleY(.48);
+      z-index: -1;
+    }
+    .astronaut-image {
+      display: block;
+      width: min(100%, 440px);
+      height: auto;
+      max-height: 440px;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 18px 30px #00000035);
+      animation: astronautFloat 5s ease-in-out infinite;
+      transform-origin: center center;
+    }
     .art-label { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); color: #9da5c6; font-size: 9px; letter-spacing: 4px; white-space: nowrap; }
     .label-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #d8ff3e; margin-left: 8px; }
     .hero-bottom { position: absolute; bottom: 20px; left: 8%; right: 8%; display: flex; align-items: center; gap: 15px; color: #737b9c; font-size: 9px; letter-spacing: 2px; }
@@ -470,13 +464,17 @@ const articles = (await getCollection("articles"))
     .footer p, .footer-copy { color: #8d95b3; font-size: 10px; }
 
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-13px); } }
-    @keyframes rocketFloat { 0%, 100% { transform: rotate(35deg) translateY(0); } 50% { transform: rotate(29deg) translateY(-13px); } }
+    @keyframes astronautFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-13px) rotate(1deg); }
+    }
 
     @media (max-width: 900px) {
       .header { padding: 0 5%; }
       .navigation { gap: 18px; }
       .hero { padding-right: 6%; padding-left: 6%; }
-      .hero-art { transform: scale(.85); }
+      .hero-art { transform: none; height: 390px; }
+      .astronaut-image { max-height: 390px; }
       .section-pad { padding: 80px 6%; }
       .method-section, .teacher-section { gap: 40px; }
     }
@@ -495,10 +493,10 @@ const articles = (await getCollection("articles"))
       .hero-copy { width: 100%; }
       .hero h1 { font-size: clamp(38px, 10vw, 53px); }
       .hero-description { font-size: 12px; }
-      .hero-art { width: 100%; height: 340px; transform: scale(.85); transform-origin: top center; margin-bottom: -35px; }
-      .planet { width: 235px; height: 235px; }
-      .planet-ring { width: 320px; height: 320px; }
-      .rocket { left: 65%; top: 125px; }
+      .hero-art { width: 100%; height: auto; min-height: 290px; margin: 5px 0 -15px; transform: none; }
+      .astronaut-image { width: min(100%, 330px); max-height: 330px; }
+      .astronaut-glow { width: min(90%, 290px); }
+      .astronaut-orbit { width: min(95%, 300px); }
       .hero-bottom { bottom: 18px; }
       .section-pad { padding: 65px 7%; }
       .section-heading { display: block; }
