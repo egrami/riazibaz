@@ -20,13 +20,66 @@ const formattedDate = new Intl.DateTimeFormat("fa-IR", {
 }).format(pubDate);
 
 const pageTitle = `${title} | ریاضی‌باز`;
+
+// Resolve article cover path for GitHub Pages.
+function resolveCoverPath(path: string): string {
+  if (/^https?:\/\//i.test(path) || path.startsWith("data:")) {
+    return path;
+  }
+
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+  const normalizedBaseWithoutLeadingSlash = normalizedBase.replace(/^\/+/, "");
+  const normalizedPath = path.replace(/^\/+/, "");
+
+  if (normalizedPath.startsWith(normalizedBaseWithoutLeadingSlash)) {
+    return `/${normalizedPath}`;
+  }
+
+  return `${normalizedBase}${normalizedPath}`;
+}
+
+const coverSrc = cover ? resolveCoverPath(cover) : undefined;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "datePublished": pubDate.toISOString(),
+  "inLanguage": "fa-IR",
+  "articleSection": category,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url.href,
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "ریاضی‌باز",
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ریاضی‌باز",
+  },
+  ...(coverSrc
+    ? {
+        "image": new URL(coverSrc, Astro.url).href,
+      }
+    : {}),
+};
+
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 ---
 
 <BaseLayout
   title={pageTitle}
   description={description}
   canonical={Astro.url.pathname}
+  image={coverSrc}
+  imageAlt={title}
+  ogType="article"
 >
+  <script type="application/ld+json" set:html={structuredDataJson} />
+
   <main class="article-page">
     <header class="site-header">
       <a class="brand" href={base}>
@@ -59,13 +112,18 @@ const pageTitle = `${title} | ریاضی‌باز`;
 
         <div class="article-meta">
           <span>✦ ریاضی‌باز</span>
-          <span>◷ {formattedDate}</span>
+          <span>
+            ◷
+            <time datetime={pubDate.toISOString()}>
+              {formattedDate}
+            </time>
+          </span>
         </div>
       </div>
 
-      {cover && (
+      {coverSrc && (
         <div class="cover-wrapper">
-          <img src={cover.startsWith("/") ? `${base}${cover.slice(1)}` : cover} alt={title} />
+          <img src={coverSrc} alt={title} />
         </div>
       )}
 
