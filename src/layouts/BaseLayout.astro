@@ -70,23 +70,6 @@ const base = import.meta.env.BASE_URL;
       rel="stylesheet"
     />
 
-    <!-- تشخیص ورود قبلی و رفرش صفحه -->
-    <script is:inline>
-      try {
-        const navigation = performance.getEntriesByType("navigation")[0];
-
-        if (navigation?.type === "reload") {
-          sessionStorage.removeItem("riazibaz-welcome-seen");
-        }
-
-        if (sessionStorage.getItem("riazibaz-welcome-seen") === "true") {
-          document.documentElement.classList.add("welcome-dismissed");
-        }
-      } catch (error) {
-        console.warn("Welcome screen state could not be read:", error);
-      }
-    </script>
-
     <ClientRouter />
 
     <slot name="head" />
@@ -95,11 +78,12 @@ const base = import.meta.env.BASE_URL;
   <body>
     <slot />
 
-    <!-- Welcome Screen -->
+    <!-- Welcome Screen: Persist across Astro navigation -->
     <section
       id="welcome-screen"
       class="welcome-screen"
       aria-label="خوشامدگویی به ریاضی‌باز"
+      transition:persist="welcome-screen"
     >
       <div class="welcome-stars"></div>
       <div class="welcome-orbit welcome-orbit-one"></div>
@@ -252,8 +236,6 @@ const base = import.meta.env.BASE_URL;
         "site-background-audio"
       ) as HTMLAudioElement | null;
 
-      const musicButton = document.getElementById("music-toggle");
-
       if (playerElement && !playerElement.dataset.musicInitialized) {
         const player = playerElement;
 
@@ -298,25 +280,14 @@ const base = import.meta.env.BASE_URL;
           }
         }
 
-        // ورود به سایت و شروع موسیقی با یک تعامل واقعی
+        // Welcome button: enter the site and start music
         if (welcomeButton && welcomeScreen) {
           welcomeButton.addEventListener("click", () => {
-            try {
-              sessionStorage.setItem(
-                "riazibaz-welcome-seen",
-                "true"
-              );
-            } catch (error) {
-              console.warn("Welcome state could not be saved:", error);
-            }
-
-            // درخواست پخش مستقیماً در رویداد کلیک
             player.muted = false;
             player.volume = 0.05;
 
-            const playRequest = player.play();
-
-            playRequest
+            // Play directly from the user's click
+            player.play()
               .then(() => {
                 updateMusicButton();
               })
@@ -327,10 +298,7 @@ const base = import.meta.env.BASE_URL;
                 );
               });
 
-            document.documentElement.classList.add(
-              "welcome-dismissed"
-            );
-
+            // Hide the persistent welcome screen
             welcomeScreen.classList.add("welcome-leaving");
           });
         }
@@ -685,12 +653,6 @@ const base = import.meta.env.BASE_URL;
       }
 
       /* Hide Welcome Screen after entry */
-
-      .welcome-dismissed .welcome-screen {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
 
       .welcome-screen.welcome-leaving {
         opacity: 0;
