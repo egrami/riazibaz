@@ -100,10 +100,12 @@ const principles = [
       <div class="hero-art" aria-hidden="true">
         <div class="orbit orbit-one"></div>
         <div class="orbit orbit-two"></div>
+
         <div class="planet">
           <div class="planet-ring"></div>
           <span>∑</span>
         </div>
+
         <div class="floating-shape shape-one">π</div>
         <div class="floating-shape shape-two">+</div>
         <div class="floating-shape shape-three">÷</div>
@@ -317,6 +319,8 @@ const principles = [
     margin-right: 8px;
   }
 
+  /* Hero layout */
+
   .about-hero {
     min-height: 540px;
     padding: 75px 8%;
@@ -330,8 +334,18 @@ const principles = [
       radial-gradient(ellipse at 10% 0%, #1b456055, transparent 35%);
   }
 
+  /* این عنصر تزئینی نباید در محاسبه ستون‌های Grid شرکت کند */
+  .hero-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* متن در ستون سمت چپ */
   .hero-content {
     grid-column: 2;
+    grid-row: 1;
     position: relative;
     z-index: 2;
     align-self: center;
@@ -398,8 +412,10 @@ const principles = [
     transform: translateY(-4px);
   }
 
+  /* منظومه در همان ردیف متن و در ستون سمت راست */
   .hero-art {
     grid-column: 1;
+    grid-row: 1;
     width: 100%;
     max-width: 480px;
     min-width: 0;
@@ -516,12 +532,25 @@ const principles = [
     font-size: 30px;
   }
 
-  .star-one { top: 8%; left: 35%; }
-  .star-two { bottom: 5%; right: 42%; color: var(--coral); }
+  .star-one {
+    top: 8%;
+    left: 35%;
+  }
+
+  .star-two {
+    bottom: 5%;
+    right: 42%;
+    color: var(--coral);
+  }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-13px) rotate(8deg); }
+    0%, 100% {
+      transform: translateY(0) rotate(0);
+    }
+
+    50% {
+      transform: translateY(-13px) rotate(8deg);
+    }
   }
 
   .story-section,
@@ -633,9 +662,17 @@ const principles = [
     transform: translateY(-8px);
   }
 
-  .credential-card.lime:hover { border-color: var(--lime); }
-  .credential-card.coral:hover { border-color: var(--coral); }
-  .credential-card.purple:hover { border-color: var(--purple); }
+  .credential-card.lime:hover {
+    border-color: var(--lime);
+  }
+
+  .credential-card.coral:hover {
+    border-color: var(--coral);
+  }
+
+  .credential-card.purple:hover {
+    border-color: var(--purple);
+  }
 
   .card-number {
     color: #ffffff45;
@@ -852,6 +889,8 @@ const principles = [
     font-size: 12px;
   }
 
+  /* Tablet and mobile */
+
   @media (max-width: 800px) {
     .site-header {
       padding: 15px 5%;
@@ -873,12 +912,17 @@ const principles = [
       grid-column: 1;
     }
 
+    .hero-content {
+      grid-row: 1;
+    }
+
     .about-hero p {
       margin-right: auto;
       margin-left: auto;
     }
 
     .hero-art {
+      grid-row: 2;
       width: min(100%, 430px);
       min-height: 320px;
       margin: 0 auto;
