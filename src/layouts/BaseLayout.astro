@@ -70,6 +70,23 @@ const base = import.meta.env.BASE_URL;
       rel="stylesheet"
     />
 
+    <!-- تشخیص ورود قبلی و رفرش صفحه -->
+    <script is:inline>
+      try {
+        const navigation = performance.getEntriesByType("navigation")[0];
+
+        if (navigation?.type === "reload") {
+          sessionStorage.removeItem("riazibaz-welcome-seen");
+        }
+
+        if (sessionStorage.getItem("riazibaz-welcome-seen") === "true") {
+          document.documentElement.classList.add("welcome-dismissed");
+        }
+      } catch (error) {
+        console.warn("Welcome screen state could not be read:", error);
+      }
+    </script>
+
     <ClientRouter />
 
     <slot name="head" />
@@ -77,6 +94,85 @@ const base = import.meta.env.BASE_URL;
 
   <body>
     <slot />
+
+    <!-- Welcome Screen -->
+    <section
+      id="welcome-screen"
+      class="welcome-screen"
+      aria-label="خوشامدگویی به ریاضی‌باز"
+    >
+      <div class="welcome-stars"></div>
+      <div class="welcome-orbit welcome-orbit-one"></div>
+      <div class="welcome-orbit welcome-orbit-two"></div>
+
+      <div class="welcome-content">
+
+        <div class="welcome-image-wrapper">
+          <div class="welcome-image-glow"></div>
+
+          <img
+            class="welcome-image"
+            src={`${base}images/elahe-gharami.webp`}
+            alt="الهه گرامی، مدرس ریاضی"
+            fetchpriority="high"
+          />
+
+          <span class="welcome-spark welcome-spark-one">✦</span>
+          <span class="welcome-spark welcome-spark-two">✧</span>
+        </div>
+
+        <div class="welcome-text">
+          <span class="welcome-eyebrow">
+            به دنیای یادگیری خوش اومدید
+          </span>
+
+          <h1>
+            سلام! من
+            <span>الهه گرامی</span>
+            هستم.
+          </h1>
+
+          <p class="welcome-description">
+            مدرس ریاضی و همراه شما در مسیر یادگیری.
+            به ریاضی‌باز خوش اومدید!
+          </p>
+
+          <p class="welcome-subtitle">
+            اینجا قراره ریاضی رو ساده‌تر، جذاب‌تر و لذت‌بخش‌تر یاد بگیریم.
+          </p>
+        </div>
+
+        <button
+          id="welcome-enter"
+          class="welcome-enter"
+          type="button"
+        >
+          <span>ورود به سایت</span>
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M19 12H5M5 12L12 5M5 12L12 19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+
+        <div class="welcome-footer">
+          <span class="welcome-footer-star">✦</span>
+          یادگیری می‌تونه یک ماجراجویی جذاب باشه!
+          <span class="welcome-footer-star">✦</span>
+        </div>
+
+      </div>
+    </section>
 
     <!-- Background Music Player -->
     <div
@@ -86,7 +182,6 @@ const base = import.meta.env.BASE_URL;
       <audio
         id="site-background-audio"
         src={`${base}audio/background-music.mp3`}
-        autoplay
         loop
         preload="auto"
         playsinline
@@ -143,26 +238,31 @@ const base = import.meta.env.BASE_URL;
       </button>
     </div>
 
-    <!-- Music Player Script -->
+    <!-- Welcome and Music Scripts -->
     <script>
+      const welcomeScreen = document.getElementById(
+        "welcome-screen"
+      );
+
+      const welcomeButton = document.getElementById(
+        "welcome-enter"
+      );
+
       const playerElement = document.getElementById(
         "site-background-audio"
       ) as HTMLAudioElement | null;
+
+      const musicButton = document.getElementById("music-toggle");
 
       if (playerElement && !playerElement.dataset.musicInitialized) {
         const player = playerElement;
 
         player.dataset.musicInitialized = "true";
 
-        // Default settings
         player.volume = 0.05;
         player.loop = true;
         player.muted = false;
-        player.autoplay = true;
 
-        let playRequest: Promise<void> | null = null;
-
-        // Update mute button appearance
         function updateMusicButton() {
           const button = document.getElementById("music-toggle");
 
@@ -170,10 +270,7 @@ const base = import.meta.env.BASE_URL;
 
           const isMuted = player.muted;
 
-          button.setAttribute(
-            "aria-pressed",
-            String(isMuted)
-          );
+          button.setAttribute("aria-pressed", String(isMuted));
 
           button.setAttribute(
             "aria-label",
@@ -201,32 +298,41 @@ const base = import.meta.env.BASE_URL;
           }
         }
 
-        // Start playback when the audio is ready
-        function startMusic() {
-          if (!player.paused || playRequest) return;
+        // ورود به سایت و شروع موسیقی با یک تعامل واقعی
+        if (welcomeButton && welcomeScreen) {
+          welcomeButton.addEventListener("click", () => {
+            try {
+              sessionStorage.setItem(
+                "riazibaz-welcome-seen",
+                "true"
+              );
+            } catch (error) {
+              console.warn("Welcome state could not be saved:", error);
+            }
 
-          playRequest = player.play();
+            // درخواست پخش مستقیماً در رویداد کلیک
+            player.muted = false;
+            player.volume = 0.05;
 
-          playRequest
-            .then(() => {
-              updateMusicButton();
-            })
-            .catch((error: unknown) => {
-              console.warn("Background music could not start:", error);
-            })
-            .finally(() => {
-              playRequest = null;
-            });
-        }
+            const playRequest = player.play();
 
-        // Try playback when audio data becomes available
-        player.addEventListener("loadeddata", startMusic);
-        player.addEventListener("canplay", startMusic);
-        player.addEventListener("canplaythrough", startMusic);
+            playRequest
+              .then(() => {
+                updateMusicButton();
+              })
+              .catch((error: unknown) => {
+                console.warn(
+                  "Background music could not start:",
+                  error
+                );
+              });
 
-        // Also try immediately if audio is already ready
-        if (player.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-          startMusic();
+            document.documentElement.classList.add(
+              "welcome-dismissed"
+            );
+
+            welcomeScreen.classList.add("welcome-leaving");
+          });
         }
 
         // Mute / Unmute only
@@ -246,10 +352,7 @@ const base = import.meta.env.BASE_URL;
           updateMusicButton();
         }
 
-        document.addEventListener(
-          "click",
-          handleMusicButton
-        );
+        document.addEventListener("click", handleMusicButton);
 
         document.addEventListener(
           "astro:page-load",
@@ -335,6 +438,266 @@ const base = import.meta.env.BASE_URL;
         outline-offset: 4px;
       }
 
+      /* Welcome Screen */
+
+      .welcome-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+        padding: 32px 20px;
+
+        background:
+          radial-gradient(
+            ellipse at 50% 35%,
+            #242d58 0%,
+            #151b3a 45%,
+            #10142c 100%
+          );
+
+        opacity: 1;
+        visibility: visible;
+
+        transition:
+          opacity 0.65s ease,
+          visibility 0.65s ease;
+      }
+
+      .welcome-screen::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+
+        background-image:
+          radial-gradient(2px 2px at 10% 20%, #ffffffaa 50%, transparent 100%),
+          radial-gradient(2px 2px at 25% 75%, #d8ff3e99 50%, transparent 100%),
+          radial-gradient(2px 2px at 80% 15%, #ffffffaa 50%, transparent 100%),
+          radial-gradient(2px 2px at 90% 70%, #5de2e799 50%, transparent 100%),
+          radial-gradient(1px 1px at 55% 12%, #ffffffaa 50%, transparent 100%),
+          radial-gradient(1px 1px at 70% 85%, #ffffffaa 50%, transparent 100%);
+
+        background-size: 300px 300px;
+      }
+
+      .welcome-stars {
+        position: absolute;
+        width: 440px;
+        height: 440px;
+        top: -230px;
+        right: -180px;
+        border: 1px solid #a78bfa22;
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 45px #a78bfa08,
+          0 0 0 90px #a78bfa06;
+        pointer-events: none;
+      }
+
+      .welcome-orbit {
+        position: absolute;
+        width: 650px;
+        height: 650px;
+        border: 1px solid #5de2e718;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .welcome-orbit-one {
+        transform: rotate(-25deg) scaleY(0.42);
+      }
+
+      .welcome-orbit-two {
+        transform: rotate(55deg) scaleY(0.5);
+        border-color: #d8ff3e16;
+      }
+
+      .welcome-content {
+        position: relative;
+        z-index: 2;
+
+        width: min(100%, 620px);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 22px;
+      }
+
+      .welcome-image-wrapper {
+        position: relative;
+        width: 190px;
+        height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .welcome-image-glow {
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: #d8ff3e;
+        opacity: 0.16;
+        filter: blur(35px);
+      }
+
+      .welcome-image {
+        position: relative;
+        z-index: 1;
+
+        width: 174px;
+        height: 174px;
+
+        object-fit: cover;
+        object-position: center;
+
+        border-radius: 50%;
+        border: 4px solid #d8ff3e;
+        box-shadow:
+          0 0 0 9px #d8ff3e18,
+          0 12px 45px #00000055;
+      }
+
+      .welcome-spark {
+        position: absolute;
+        z-index: 2;
+        color: var(--color-primary);
+      }
+
+      .welcome-spark-one {
+        top: 12px;
+        right: 4px;
+        font-size: 30px;
+      }
+
+      .welcome-spark-two {
+        bottom: 18px;
+        left: 0;
+        color: var(--color-cyan);
+        font-size: 34px;
+      }
+
+      .welcome-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .welcome-eyebrow {
+        color: var(--color-cyan);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      .welcome-text h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(25px, 5vw, 38px);
+        font-weight: 900;
+        line-height: 1.7;
+      }
+
+      .welcome-text h1 span {
+        color: var(--color-primary);
+        white-space: nowrap;
+      }
+
+      .welcome-description {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(15px, 3vw, 18px);
+        font-weight: 600;
+        line-height: 2;
+      }
+
+      .welcome-subtitle {
+        max-width: 440px;
+        margin: 0;
+        color: var(--color-muted);
+        font-size: 13px;
+        line-height: 2.1;
+      }
+
+      .welcome-enter {
+        min-width: 205px;
+        min-height: 58px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+
+        padding: 12px 28px;
+
+        border: 0;
+        border-radius: 18px;
+
+        background: var(--color-primary);
+        color: #10142c;
+
+        font-size: 16px;
+        font-weight: 900;
+
+        box-shadow: 0 8px 30px #d8ff3e30;
+
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          background 0.25s ease;
+      }
+
+      .welcome-enter:hover {
+        transform: translateY(-4px);
+        background: #e5ff75;
+        box-shadow: 0 13px 35px #d8ff3e45;
+      }
+
+      .welcome-enter svg {
+        width: 21px;
+        height: 21px;
+        transition: transform 0.25s ease;
+      }
+
+      .welcome-enter:hover svg {
+        transform: translateX(-4px);
+      }
+
+      .welcome-footer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #aeb5d2;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .welcome-footer-star {
+        color: var(--color-secondary);
+      }
+
+      /* Hide Welcome Screen after entry */
+
+      .welcome-dismissed .welcome-screen {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .welcome-screen.welcome-leaving {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
       /* Floating Music Button */
 
       .music-widget {
@@ -388,6 +751,24 @@ const base = import.meta.env.BASE_URL;
       }
 
       @media (max-width: 600px) {
+        .welcome-content {
+          gap: 18px;
+        }
+
+        .welcome-image-wrapper {
+          width: 155px;
+          height: 155px;
+        }
+
+        .welcome-image {
+          width: 142px;
+          height: 142px;
+        }
+
+        .welcome-footer {
+          font-size: 10px;
+        }
+
         .music-widget {
           left: max(16px, env(safe-area-inset-left));
           bottom: max(16px, env(safe-area-inset-bottom));
@@ -396,6 +777,30 @@ const base = import.meta.env.BASE_URL;
         .music-toggle {
           width: 48px;
           height: 48px;
+        }
+      }
+
+      @media (max-height: 680px) {
+        .welcome-content {
+          gap: 12px;
+        }
+
+        .welcome-image-wrapper {
+          width: 125px;
+          height: 125px;
+        }
+
+        .welcome-image {
+          width: 116px;
+          height: 116px;
+        }
+
+        .welcome-subtitle {
+          display: none;
+        }
+
+        .welcome-enter {
+          min-height: 50px;
         }
       }
 
