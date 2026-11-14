@@ -78,84 +78,77 @@ const base = import.meta.env.BASE_URL;
   <body>
     <slot />
 
-    <!-- Welcome Screen: Persist across Astro navigation -->
+    <!-- Music Notice -->
     <section
-      id="welcome-screen"
-      class="welcome-screen"
-      aria-label="خوشامدگویی به ریاضی‌باز"
-      transition:persist="welcome-screen"
+      id="music-notice"
+      class="music-notice"
+      aria-label="اطلاع‌رسانی موسیقی پس‌زمینه"
     >
-      <div class="welcome-stars"></div>
-      <div class="welcome-orbit welcome-orbit-one"></div>
-      <div class="welcome-orbit welcome-orbit-two"></div>
-
-      <div class="welcome-content">
-
-        <div class="welcome-image-wrapper">
-          <div class="welcome-image-glow"></div>
-
-          <img
-            class="welcome-image"
-            src={`${base}images/elahe-gharami.webp`}
-            alt="الهه گرامی، مدرس ریاضی"
-            fetchpriority="high"
-          />
-
-          <span class="welcome-spark welcome-spark-one">✦</span>
-          <span class="welcome-spark welcome-spark-two">✧</span>
-        </div>
-
-        <div class="welcome-text">
-          <span class="welcome-eyebrow">
-            به دنیای یادگیری خوش اومدید
-          </span>
-
-          <h1>
-            سلام! من
-            <span>الهه گرامی</span>
-            هستم.
-          </h1>
-
-          <p class="welcome-description">
-            مدرس ریاضی و همراه شما در مسیر یادگیری.
-            به ریاضی‌باز خوش اومدید!
-          </p>
-
-          <p class="welcome-subtitle">
-            اینجا قراره ریاضی رو ساده‌تر، جذاب‌تر و لذت‌بخش‌تر یاد بگیریم.
-          </p>
-        </div>
-
-        <button
-          id="welcome-enter"
-          class="welcome-enter"
-          type="button"
+      <div class="music-notice-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
-          <span>ورود به سایت</span>
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              d="M19 12H5M5 12L12 5M5 12L12 19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </button>
-
-        <div class="welcome-footer">
-          <span class="welcome-footer-star">✦</span>
-          یادگیری می‌تونه یک ماجراجویی جذاب باشه!
-          <span class="welcome-footer-star">✦</span>
-        </div>
-
+          <path
+            d="M9 18V5L21 3V16"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <circle
+            cx="6"
+            cy="18"
+            r="3"
+            stroke="currentColor"
+            stroke-width="1.8"
+          />
+          <circle
+            cx="18"
+            cy="16"
+            r="3"
+            stroke="currentColor"
+            stroke-width="1.8"
+          />
+        </svg>
       </div>
+
+      <div class="music-notice-content">
+        <h2>یک خبر کوچک قبل از شروع! ✨</h2>
+
+        <p>
+          این وب‌سایت برای ایجاد فضایی دلنشین‌تر از موسیقی پس‌زمینه استفاده می‌کند.
+          با تأیید شما، موسیقی ملایمی پخش خواهد شد.
+        </p>
+      </div>
+
+      <button
+        id="music-notice-confirm"
+        class="music-notice-button"
+        type="button"
+      >
+        <span>متوجه شدم، وارد سایت شو</span>
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M19 12H5M5 12L12 5M5 12L12 19"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <span class="music-notice-decoration music-notice-decoration-one">✦</span>
+      <span class="music-notice-decoration music-notice-decoration-two">✧</span>
     </section>
 
     <!-- Background Music Player -->
@@ -222,33 +215,31 @@ const base = import.meta.env.BASE_URL;
       </button>
     </div>
 
-    <!-- Welcome and Music Scripts -->
+    <!-- Music Scripts -->
     <script>
-      const welcomeScreen = document.getElementById(
-        "welcome-screen"
-      );
+      const appWindow = window as Window & {
+        __riazibazMusicInitialized?: boolean;
+        __riazibazNoticeDismissed?: boolean;
+      };
 
-      const welcomeButton = document.getElementById(
-        "welcome-enter"
-      );
+      if (!appWindow.__riazibazMusicInitialized) {
+        appWindow.__riazibazMusicInitialized = true;
 
-      const playerElement = document.getElementById(
-        "site-background-audio"
-      ) as HTMLAudioElement | null;
+        function getPlayer(): HTMLAudioElement | null {
+          const element = document.getElementById(
+            "site-background-audio"
+          );
 
-      if (playerElement && !playerElement.dataset.musicInitialized) {
-        const player = playerElement;
-
-        player.dataset.musicInitialized = "true";
-
-        player.volume = 0.05;
-        player.loop = true;
-        player.muted = false;
+          return element instanceof HTMLAudioElement
+            ? element
+            : null;
+        }
 
         function updateMusicButton() {
+          const player = getPlayer();
           const button = document.getElementById("music-toggle");
 
-          if (!button) return;
+          if (!player || !button) return;
 
           const isMuted = player.muted;
 
@@ -280,53 +271,91 @@ const base = import.meta.env.BASE_URL;
           }
         }
 
-        // Welcome button: enter the site and start music
-        if (welcomeButton && welcomeScreen) {
-          welcomeButton.addEventListener("click", () => {
-            player.muted = false;
-            player.volume = 0.05;
+        function syncMusicNotice() {
+          const notice = document.getElementById("music-notice");
 
-            // Play directly from the user's click
-            player.play()
-              .then(() => {
-                updateMusicButton();
-              })
-              .catch((error: unknown) => {
-                console.warn(
-                  "Background music could not start:",
-                  error
-                );
-              });
+          if (!notice) return;
 
-            // Hide the persistent welcome screen
-            welcomeScreen.classList.add("welcome-leaving");
-          });
+          if (appWindow.__riazibazNoticeDismissed) {
+            notice.classList.add("music-notice-hidden");
+          }
         }
 
-        // Mute / Unmute only
-        function handleMusicButton(event: MouseEvent) {
+        // Initialize the player
+        const initialPlayer = getPlayer();
+
+        if (initialPlayer) {
+          initialPlayer.volume = 0.05;
+          initialPlayer.loop = true;
+          initialPlayer.muted = false;
+        }
+
+        // Handle all clicks through one delegated listener.
+        // This continues working after Astro page transitions.
+        document.addEventListener("click", (event) => {
           const target = event.target;
 
           if (!(target instanceof Element)) return;
 
-          const button = target.closest("#music-toggle");
+          // Confirm the music notice and start playback
+          const confirmButton = target.closest("#music-notice-confirm");
 
-          if (!button) return;
+          if (confirmButton) {
+            event.preventDefault();
 
-          event.preventDefault();
+            const player = getPlayer();
 
-          player.muted = !player.muted;
+            appWindow.__riazibazNoticeDismissed = true;
 
+            syncMusicNotice();
+
+            if (player) {
+              player.volume = 0.05;
+              player.muted = false;
+
+              // Playback is triggered directly by the user's click.
+              player.play()
+                .then(() => {
+                  updateMusicButton();
+                })
+                .catch((error: unknown) => {
+                  console.warn(
+                    "Background music could not start:",
+                    error
+                  );
+                });
+            }
+
+            updateMusicButton();
+
+            return;
+          }
+
+          // Mute / Unmute without stopping playback
+          const musicButton = target.closest("#music-toggle");
+
+          if (musicButton) {
+            event.preventDefault();
+
+            const player = getPlayer();
+
+            if (!player) return;
+
+            player.muted = !player.muted;
+
+            updateMusicButton();
+          }
+        });
+
+        // Re-sync the notice after Astro replaces the page content.
+        document.addEventListener("astro:after-swap", syncMusicNotice);
+
+        document.addEventListener("astro:page-load", () => {
+          syncMusicNotice();
           updateMusicButton();
-        }
+        });
 
-        document.addEventListener("click", handleMusicButton);
-
-        document.addEventListener(
-          "astro:page-load",
-          updateMusicButton
-        );
-
+        syncMusicNotice();
         updateMusicButton();
       }
     </script>
@@ -406,258 +435,162 @@ const base = import.meta.env.BASE_URL;
         outline-offset: 4px;
       }
 
-      /* Welcome Screen */
+      /* Music Notice */
 
-      .welcome-screen {
+      .music-notice {
         position: fixed;
-        inset: 0;
+        right: 24px;
+        bottom: 24px;
         z-index: 10000;
 
-        display: flex;
+        width: min(560px, calc(100% - 48px));
+
+        display: grid;
+        grid-template-columns: 54px 1fr;
         align-items: center;
-        justify-content: center;
+        gap: 15px;
+
+        padding: 22px;
 
         overflow: hidden;
-        padding: 32px 20px;
+
+        border: 1px solid #a78bfa44;
+        border-radius: 22px;
 
         background:
           radial-gradient(
-            ellipse at 50% 35%,
-            #242d58 0%,
-            #151b3a 45%,
-            #10142c 100%
-          );
+            circle at 100% 0%,
+            #a78bfa20,
+            transparent 45%
+          ),
+          linear-gradient(145deg, #202748, #171d3b);
+
+        box-shadow:
+          0 18px 60px #00000066,
+          0 0 0 1px #ffffff08;
 
         opacity: 1;
         visibility: visible;
+        transform: translateY(0);
 
         transition:
-          opacity 0.65s ease,
-          visibility 0.65s ease;
+          opacity 0.35s ease,
+          transform 0.35s ease,
+          visibility 0.35s ease;
       }
 
-      .welcome-screen::before {
-        content: "";
-        position: absolute;
-        inset: 0;
+      .music-notice-hidden {
+        opacity: 0;
+        visibility: hidden;
         pointer-events: none;
-
-        background-image:
-          radial-gradient(2px 2px at 10% 20%, #ffffffaa 50%, transparent 100%),
-          radial-gradient(2px 2px at 25% 75%, #d8ff3e99 50%, transparent 100%),
-          radial-gradient(2px 2px at 80% 15%, #ffffffaa 50%, transparent 100%),
-          radial-gradient(2px 2px at 90% 70%, #5de2e799 50%, transparent 100%),
-          radial-gradient(1px 1px at 55% 12%, #ffffffaa 50%, transparent 100%),
-          radial-gradient(1px 1px at 70% 85%, #ffffffaa 50%, transparent 100%);
-
-        background-size: 300px 300px;
+        transform: translateY(18px);
       }
 
-      .welcome-stars {
-        position: absolute;
-        width: 440px;
-        height: 440px;
-        top: -230px;
-        right: -180px;
-        border: 1px solid #a78bfa22;
-        border-radius: 50%;
-        box-shadow:
-          0 0 0 45px #a78bfa08,
-          0 0 0 90px #a78bfa06;
-        pointer-events: none;
-      }
+      .music-notice-icon {
+        width: 54px;
+        height: 54px;
 
-      .welcome-orbit {
-        position: absolute;
-        width: 650px;
-        height: 650px;
-        border: 1px solid #5de2e718;
-        border-radius: 50%;
-        pointer-events: none;
-      }
-
-      .welcome-orbit-one {
-        transform: rotate(-25deg) scaleY(0.42);
-      }
-
-      .welcome-orbit-two {
-        transform: rotate(55deg) scaleY(0.5);
-        border-color: #d8ff3e16;
-      }
-
-      .welcome-content {
-        position: relative;
-        z-index: 2;
-
-        width: min(100%, 620px);
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 22px;
-      }
-
-      .welcome-image-wrapper {
-        position: relative;
-        width: 190px;
-        height: 190px;
         display: flex;
         align-items: center;
         justify-content: center;
+
+        border: 1px solid #d8ff3e55;
+        border-radius: 17px;
+
+        background: #d8ff3e15;
+        color: var(--color-primary);
       }
 
-      .welcome-image-glow {
-        position: absolute;
-        inset: 5px;
-        border-radius: 50%;
-        background: #d8ff3e;
-        opacity: 0.16;
-        filter: blur(35px);
+      .music-notice-icon svg {
+        width: 27px;
+        height: 27px;
       }
 
-      .welcome-image {
+      .music-notice-content {
         position: relative;
         z-index: 1;
-
-        width: 174px;
-        height: 174px;
-
-        object-fit: cover;
-        object-position: center;
-
-        border-radius: 50%;
-        border: 4px solid #d8ff3e;
-        box-shadow:
-          0 0 0 9px #d8ff3e18,
-          0 12px 45px #00000055;
       }
 
-      .welcome-spark {
-        position: absolute;
-        z-index: 2;
-        color: var(--color-primary);
-      }
-
-      .welcome-spark-one {
-        top: 12px;
-        right: 4px;
-        font-size: 30px;
-      }
-
-      .welcome-spark-two {
-        bottom: 18px;
-        left: 0;
-        color: var(--color-cyan);
-        font-size: 34px;
-      }
-
-      .welcome-text {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .welcome-eyebrow {
-        color: var(--color-cyan);
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.2px;
-      }
-
-      .welcome-text h1 {
-        margin: 0;
+      .music-notice-content h2 {
+        margin: 0 0 7px;
         color: #ffffff;
-        font-size: clamp(25px, 5vw, 38px);
+        font-size: 16px;
         font-weight: 900;
-        line-height: 1.7;
       }
 
-      .welcome-text h1 span {
-        color: var(--color-primary);
-        white-space: nowrap;
-      }
-
-      .welcome-description {
+      .music-notice-content p {
         margin: 0;
-        color: #ffffff;
-        font-size: clamp(15px, 3vw, 18px);
-        font-weight: 600;
+        color: var(--color-muted);
+        font-size: 12px;
         line-height: 2;
       }
 
-      .welcome-subtitle {
-        max-width: 440px;
-        margin: 0;
-        color: var(--color-muted);
-        font-size: 13px;
-        line-height: 2.1;
-      }
+      .music-notice-button {
+        position: relative;
+        z-index: 1;
 
-      .welcome-enter {
-        min-width: 205px;
-        min-height: 58px;
+        grid-column: 1 / -1;
 
-        display: inline-flex;
+        width: 100%;
+        min-height: 48px;
+
+        display: flex;
         align-items: center;
         justify-content: center;
-        gap: 14px;
+        gap: 12px;
 
-        padding: 12px 28px;
+        padding: 10px 18px;
 
         border: 0;
-        border-radius: 18px;
+        border-radius: 14px;
 
         background: var(--color-primary);
         color: #10142c;
 
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 900;
 
-        box-shadow: 0 8px 30px #d8ff3e30;
+        box-shadow: 0 6px 22px #d8ff3e22;
 
         transition:
-          transform 0.25s ease,
-          box-shadow 0.25s ease,
-          background 0.25s ease;
+          transform 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
-      .welcome-enter:hover {
-        transform: translateY(-4px);
+      .music-notice-button:hover {
+        transform: translateY(-2px);
         background: #e5ff75;
-        box-shadow: 0 13px 35px #d8ff3e45;
+        box-shadow: 0 9px 26px #d8ff3e35;
       }
 
-      .welcome-enter svg {
-        width: 21px;
-        height: 21px;
-        transition: transform 0.25s ease;
+      .music-notice-button svg {
+        width: 19px;
+        height: 19px;
+        transition: transform 0.2s ease;
       }
 
-      .welcome-enter:hover svg {
-        transform: translateX(-4px);
+      .music-notice-button:hover svg {
+        transform: translateX(-3px);
       }
 
-      .welcome-footer {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #aeb5d2;
-        font-size: 11px;
-        font-weight: 500;
-      }
-
-      .welcome-footer-star {
-        color: var(--color-secondary);
-      }
-
-      /* Hide Welcome Screen after entry */
-
-      .welcome-screen.welcome-leaving {
-        opacity: 0;
-        visibility: hidden;
+      .music-notice-decoration {
+        position: absolute;
         pointer-events: none;
+        color: #a78bfa66;
+      }
+
+      .music-notice-decoration-one {
+        top: 12px;
+        left: 17px;
+        font-size: 20px;
+      }
+
+      .music-notice-decoration-two {
+        bottom: 68px;
+        left: 35px;
+        color: #d8ff3e66;
+        font-size: 25px;
       }
 
       /* Floating Music Button */
@@ -713,22 +646,33 @@ const base = import.meta.env.BASE_URL;
       }
 
       @media (max-width: 600px) {
-        .welcome-content {
-          gap: 18px;
+        .music-notice {
+          right: 12px;
+          bottom: 12px;
+          width: calc(100% - 24px);
+          grid-template-columns: 46px 1fr;
+          gap: 12px;
+          padding: 17px;
+          border-radius: 18px;
         }
 
-        .welcome-image-wrapper {
-          width: 155px;
-          height: 155px;
+        .music-notice-icon {
+          width: 46px;
+          height: 46px;
+          border-radius: 14px;
         }
 
-        .welcome-image {
-          width: 142px;
-          height: 142px;
+        .music-notice-content h2 {
+          font-size: 14px;
         }
 
-        .welcome-footer {
-          font-size: 10px;
+        .music-notice-content p {
+          font-size: 11px;
+        }
+
+        .music-notice-button {
+          min-height: 46px;
+          font-size: 13px;
         }
 
         .music-widget {
@@ -739,30 +683,6 @@ const base = import.meta.env.BASE_URL;
         .music-toggle {
           width: 48px;
           height: 48px;
-        }
-      }
-
-      @media (max-height: 680px) {
-        .welcome-content {
-          gap: 12px;
-        }
-
-        .welcome-image-wrapper {
-          width: 125px;
-          height: 125px;
-        }
-
-        .welcome-image {
-          width: 116px;
-          height: 116px;
-        }
-
-        .welcome-subtitle {
-          display: none;
-        }
-
-        .welcome-enter {
-          min-height: 50px;
         }
       }
 
