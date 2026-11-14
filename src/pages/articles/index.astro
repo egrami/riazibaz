@@ -199,6 +199,8 @@ const resolveCoverPath = (path: string) => {
 </BaseLayout>
 
 <script>
+  const FILTER_STORAGE_KEY = "riazibaz-articles-category";
+
   function initArticleFilters() {
     const buttons = document.querySelectorAll<HTMLButtonElement>(
       ".category-button"
@@ -207,42 +209,72 @@ const resolveCoverPath = (path: string) => {
     const cards = document.querySelectorAll<HTMLElement>(".article-card");
     const noResults = document.querySelector<HTMLElement>("#no-results");
 
+    if (!buttons.length) return;
+
+    function applyFilter(selectedCategory: string) {
+      let visibleCount = 0;
+
+      buttons.forEach((button) => {
+        const isSelected = button.dataset.category === selectedCategory;
+
+        button.classList.toggle("selected", isSelected);
+        button.setAttribute("aria-pressed", String(isSelected));
+      });
+
+      cards.forEach((card) => {
+        const matches =
+          selectedCategory === "همه مقاله‌ها" ||
+          card.dataset.category === selectedCategory;
+
+        card.hidden = !matches;
+
+        if (matches) visibleCount++;
+      });
+
+      if (noResults) {
+        noResults.hidden = visibleCount !== 0;
+      }
+    }
+
+    // بازیابی دسته‌بندی ذخیره‌شده
+    let savedCategory = "همه مقاله‌ها";
+
+    try {
+      const storedCategory = sessionStorage.getItem(FILTER_STORAGE_KEY);
+
+      const categoryExists = Array.from(buttons).some(
+        (button) => button.dataset.category === storedCategory
+      );
+
+      if (storedCategory && categoryExists) {
+        savedCategory = storedCategory;
+      }
+    } catch {
+      // در صورت در دسترس نبودن sessionStorage، فیلتر پیش‌فرض استفاده می‌شود.
+    }
+
+    applyFilter(savedCategory);
+
     buttons.forEach((button) => {
-      // جلوگیری از ثبت چندباره رویدادها
       if (button.dataset.initialized === "true") return;
       button.dataset.initialized = "true";
 
       button.addEventListener("click", () => {
         const selectedCategory = button.dataset.category;
 
-        buttons.forEach((item) => {
-          item.classList.remove("selected");
-          item.setAttribute("aria-pressed", "false");
-        });
+        if (!selectedCategory) return;
 
-        button.classList.add("selected");
-        button.setAttribute("aria-pressed", "true");
-
-        let visibleCount = 0;
-
-        cards.forEach((card) => {
-          const matches =
-            selectedCategory === "همه مقاله‌ها" ||
-            card.dataset.category === selectedCategory;
-
-          card.hidden = !matches;
-
-          if (matches) visibleCount++;
-        });
-
-        if (noResults) {
-          noResults.hidden = visibleCount !== 0;
+        try {
+          sessionStorage.setItem(FILTER_STORAGE_KEY, selectedCategory);
+        } catch {
+          // در صورت خطای ذخیره‌سازی، فیلتر همچنان در همین صفحه کار می‌کند.
         }
+
+        applyFilter(selectedCategory);
       });
     });
   }
 
-  // اجرای اولیه و اجرای مجدد پس از جابه‌جایی بین صفحات
   initArticleFilters();
   document.addEventListener("astro:page-load", initArticleFilters);
 </script>
