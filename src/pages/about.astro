@@ -14,17 +14,24 @@ const highlights = [
   },
   {
     number: "02",
-    title: "تجربه تدریس",
+    title: "تدریس در آموزش‌وپرورش",
     description:
-      "تجربه آموزش ریاضی در مؤسسات آموزشی و همراهی با دانش‌آموزان در مسیر یادگیری.",
+      "۴ سال سابقه تدریس ریاضی در آموزش‌وپرورش و همراهی با دانش‌آموزان در مسیر یادگیری.",
     color: "coral",
   },
   {
     number: "03",
-    title: "المپیاد ریاضی",
+    title: "تدریس خصوصی",
     description:
-      "دارای مدال المپیاد ریاضی؛ با علاقه به تفکر تحلیلی و حل مسئله.",
+      "۱۰ سال سابقه تدریس خصوصی ریاضی با توجه به سطح، نیازها و شیوه یادگیری هر دانش‌آموز.",
     color: "purple",
+  },
+  {
+    number: "04",
+    title: "تجربه آموزش به بیش از ۵۰ دانش‌آموز",
+    description:
+      "تاکنون بیش از ۵۰ دانش‌آموز را در قالب کلاس‌های خصوصی همراهی کرده‌ام.",
+    color: "cyan",
   },
 ];
 
@@ -52,7 +59,7 @@ const principles = [
 
 <BaseLayout
   title="درباره الهه گرامی | ریاضی‌باز"
-  description="با الهه گرامی، مدرس ریاضی و فارغ‌التحصیل ریاضی کاربردی آشنا شوید. رویکرد آموزشی، تجربه و مسیر یادگیری در ریاضی‌باز."
+  description="با الهه گرامی، مدرس ریاضی و فارغ‌التحصیل ریاضی کاربردی آشنا شوید. آشنایی با سوابق تدریس، روش آموزش و کلاس‌های ریاضی پایه‌های اول تا نهم."
   canonical="/about/"
 >
   <main class="about-page">
@@ -165,7 +172,13 @@ const principles = [
           <article class={`credential-card ${item.color}`}>
             <span class="card-number">{item.number}</span>
             <div class="card-symbol">
-              {item.number === "01" ? "∑" : item.number === "02" ? "✳" : "🏅"}
+              {item.number === "01"
+                ? "∑"
+                : item.number === "02"
+                  ? "✳"
+                  : item.number === "03"
+                    ? "📚"
+                    : "✦"}
             </div>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
@@ -207,16 +220,21 @@ const principles = [
       <div class="classes-decoration" aria-hidden="true">∞</div>
       <div>
         <span class="eyebrow"><span></span> LEARNING TOGETHER</span>
-        <h2>از اولین قدم‌ها تا مفاهیم پیچیده‌تر</h2>
+        <h2>کلاس‌های ریاضی برای پایه‌های اول تا نهم</h2>
         <p>
-          آموزش ریاضی برای دانش‌آموزان پایه اول تا نهم، با توجه به سطح،
-          نیازها و شرایط یادگیری هر دانش‌آموز.
+          کلاس‌های آموزشی به دو شکل خصوصی تک‌نفره و گروهی برگزار می‌شوند.
+          محتوای آموزش با توجه به پایه تحصیلی، سطح و نیازهای دانش‌آموز
+          تنظیم می‌شود تا هر فرد بتواند مسیر یادگیری خودش را با اطمینان طی کند.
         </p>
       </div>
       <div class="grade-pills">
         <span>پایه اول تا سوم</span>
         <span>پایه چهارم تا ششم</span>
         <span>پایه هفتم تا نهم</span>
+      </div>
+      <div class="class-types">
+        <span>کلاس خصوصی تک‌نفره</span>
+        <span>کلاس گروهی</span>
       </div>
     </section>
 
@@ -334,7 +352,6 @@ const principles = [
       radial-gradient(ellipse at 10% 0%, #1b456055, transparent 35%);
   }
 
-  /* این عنصر تزئینی نباید در محاسبه ستون‌های Grid شرکت کند */
   .hero-stars {
     position: absolute;
     inset: 0;
@@ -342,7 +359,6 @@ const principles = [
     pointer-events: none;
   }
 
-  /* متن در ستون سمت چپ */
   .hero-content {
     grid-column: 2;
     grid-row: 1;
@@ -412,7 +428,6 @@ const principles = [
     transform: translateY(-4px);
   }
 
-  /* منظومه در همان ردیف متن و در ستون سمت راست */
   .hero-art {
     grid-column: 1;
     grid-row: 1;
@@ -642,14 +657,14 @@ const principles = [
 
   .credential-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 20px;
     margin-top: 50px;
   }
 
   .credential-card {
     min-height: 270px;
-    padding: 27px;
+    padding: 25px;
     border: 1px solid #ffffff15;
     border-radius: 22px;
     background: #191e3b;
@@ -672,6 +687,10 @@ const principles = [
 
   .credential-card.purple:hover {
     border-color: var(--purple);
+  }
+
+  .credential-card.cyan:hover {
+    border-color: var(--cyan);
   }
 
   .card-number {
@@ -702,10 +721,16 @@ const principles = [
     background: #a78bfa20;
   }
 
+  .cyan .card-symbol {
+    color: var(--cyan);
+    background: #5de2e720;
+  }
+
   .credential-card h3,
   .principle-item h3 {
     margin: 0 0 10px;
     font-size: 17px;
+    line-height: 1.8;
   }
 
   .credential-card p,
@@ -785,14 +810,17 @@ const principles = [
   }
 
   .classes-section p {
-    max-width: 650px;
+    max-width: 700px;
   }
 
-  .grade-pills {
+  .grade-pills,
+  .class-types {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 25px;
+    position: relative;
+    z-index: 1;
   }
 
   .grade-pills span {
@@ -800,6 +828,14 @@ const principles = [
     border: 1px solid #5de2e755;
     border-radius: 50px;
     color: var(--cyan);
+    font-size: 12px;
+  }
+
+  .class-types span {
+    padding: 10px 16px;
+    border: 1px solid #d8ff3e55;
+    border-radius: 50px;
+    color: var(--lime);
     font-size: 12px;
   }
 
@@ -891,6 +927,12 @@ const principles = [
 
   /* Tablet and mobile */
 
+  @media (max-width: 1050px) {
+    .credential-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   @media (max-width: 800px) {
     .site-header {
       padding: 15px 5%;
@@ -941,7 +983,7 @@ const principles = [
     }
 
     .credential-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .credential-card {
@@ -970,6 +1012,12 @@ const principles = [
     .site-footer .brand {
       width: 100%;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .credential-grid {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -1030,6 +1078,10 @@ const principles = [
       flex-basis: 44px;
       width: 44px;
       height: 44px;
+    }
+
+    .classes-section {
+      padding: 25px 20px;
     }
   }
 </style>
