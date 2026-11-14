@@ -7,6 +7,9 @@ interface Props {
   description?: string;
   canonical?: string;
   noindex?: boolean;
+  image?: string;
+  imageAlt?: string;
+  ogType?: "website" | "article";
 }
 
 const {
@@ -14,19 +17,70 @@ const {
   description = "آموزش مفهومی و جذاب ریاضی برای دانش‌آموزان پایه اول تا نهم.",
   canonical,
   noindex = false,
+  image,
+  imageAlt = "ریاضی‌باز | آموزش ریاضی",
+  ogType = "website",
 } = Astro.props;
 
-const siteUrl = "https://egrami.github.io/riazibaz";
-
-const pageUrl = canonical
-  ? new URL(canonical, siteUrl + "/").href
-  : Astro.url.href;
+const siteOrigin = "https://egrami.github.io";
+const base = import.meta.env.BASE_URL;
+const basePath = base.endsWith("/") ? base : `${base}/`;
 
 const fullTitle = title.includes("ریاضی‌باز")
   ? title
   : `${title} | ریاضی‌باز`;
 
-const base = import.meta.env.BASE_URL;
+// Resolve canonical URLs while preserving the GitHub Pages base path.
+function resolvePageUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) {
+    return new URL(path).href;
+  }
+
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/${path}`;
+
+  if (
+    normalizedPath === basePath.slice(0, -1) ||
+    normalizedPath.startsWith(basePath)
+  ) {
+    return new URL(normalizedPath, siteOrigin).href;
+  }
+
+  return new URL(
+    `${basePath}${normalizedPath.replace(/^\/+/, "")}`,
+    siteOrigin
+  ).href;
+}
+
+const pageUrl = resolvePageUrl(
+  canonical ?? Astro.url.pathname
+);
+
+// Resolve image URLs without losing the site's base path.
+function resolveImageUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) {
+    return new URL(path).href;
+  }
+
+  const normalizedPath = path.startsWith("/")
+    ? path
+    : `/${path}`;
+
+  if (
+    normalizedPath === basePath.slice(0, -1) ||
+    normalizedPath.startsWith(basePath)
+  ) {
+    return new URL(normalizedPath, siteOrigin).href;
+  }
+
+  return new URL(
+    `${basePath}${normalizedPath.replace(/^\/+/, "")}`,
+    siteOrigin
+  ).href;
+}
+
+const imageUrl = image ? resolveImageUrl(image) : undefined;
 ---
 
 <!doctype html>
@@ -45,12 +99,35 @@ const base = import.meta.env.BASE_URL;
       <meta name="robots" content="noindex, nofollow" />
     )}
 
-    <meta property="og:type" content="website" />
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content="fa_IR" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={pageUrl} />
     <meta property="og:site_name" content="ریاضی‌باز" />
+
+    {imageUrl && (
+      <>
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image:alt" content={imageAlt} />
+      </>
+    )}
+
+    <!-- Twitter Card -->
+    <meta
+      name="twitter:card"
+      content={imageUrl ? "summary_large_image" : "summary"}
+    />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    {imageUrl && (
+      <>
+        <meta name="twitter:image" content={imageUrl} />
+        <meta name="twitter:image:alt" content={imageAlt} />
+      </>
+    )}
 
     <link
       rel="icon"
