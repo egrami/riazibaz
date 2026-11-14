@@ -1,5 +1,7 @@
 
 ---
+import { ClientRouter } from "astro:transitions";
+
 interface Props {
   title?: string;
   description?: string;
@@ -9,7 +11,7 @@ interface Props {
 
 const {
   title = "ریاضی‌باز | آموزش ریاضی با الهه گرامی",
-  description = "آموزش مفهومی و جذاب ریاضی برای دانش‌آموزان پایه اول تا نهم .",
+  description = "آموزش مفهومی و جذاب ریاضی برای دانش‌آموزان پایه اول تا نهم.",
   canonical,
   noindex = false,
 } = Astro.props;
@@ -22,6 +24,8 @@ const pageUrl = canonical
 const fullTitle = title.includes("ریاضی‌باز")
   ? title
   : `${title} | ریاضی‌باز`;
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -44,7 +48,11 @@ const fullTitle = title.includes("ریاضی‌باز")
     <meta property="og:url" content={pageUrl} />
     <meta property="og:site_name" content="ریاضی‌باز" />
 
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href={`${base}favicon.svg`}
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,11 +62,197 @@ const fullTitle = title.includes("ریاضی‌باز")
       rel="stylesheet"
     />
 
+    <ClientRouter />
+
     <slot name="head" />
   </head>
 
   <body>
     <slot />
+
+    <!-- Background Music Player -->
+    <div
+      class="music-widget"
+      transition:persist="music-widget"
+    >
+      <audio
+        id="site-background-audio"
+        src={`${base}audio/background-music.mp3`}
+        autoplay
+        loop
+        preload="auto"
+        playsinline
+      ></audio>
+
+      <button
+        id="music-toggle"
+        class="music-toggle"
+        type="button"
+        aria-label="قطع صدای موسیقی"
+        aria-pressed="false"
+        title="قطع صدای موسیقی"
+      >
+        <svg
+          class="music-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M11 5L6 9H3V15H6L11 19V5Z"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <g class="sound-waves">
+            <path
+              d="M15.5 8.5C17.5 10.5 17.5 13.5 15.5 15.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18.5 5.5C22 9 22 15 18.5 18.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </g>
+
+          <path
+            class="mute-line"
+            d="M16 9L21 15M21 9L16 15"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            style="display: none;"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      const audio = document.getElementById(
+        "site-background-audio"
+      ) as HTMLAudioElement | null;
+
+      if (audio) {
+        audio.volume = 0.3;
+        audio.loop = true;
+        audio.muted = false;
+
+        const toggleButton = document.getElementById("music-toggle");
+
+        function updateMusicButton() {
+          const button = document.getElementById("music-toggle");
+
+          if (!button || !audio) return;
+
+          const isMuted = audio.muted;
+
+          button.setAttribute("aria-pressed", String(isMuted));
+
+          button.setAttribute(
+            "aria-label",
+            isMuted ? "فعال کردن صدای موسیقی" : "قطع صدای موسیقی"
+          );
+
+          button.setAttribute(
+            "title",
+            isMuted ? "فعال کردن صدای موسیقی" : "قطع صدای موسیقی"
+          );
+
+          const soundWaves = button.querySelector(".sound-waves");
+          const muteLine = button.querySelector(".mute-line");
+
+          if (soundWaves instanceof SVGElement) {
+            soundWaves.style.display = isMuted ? "none" : "block";
+          }
+
+          if (muteLine instanceof SVGElement) {
+            muteLine.style.display = isMuted ? "block" : "none";
+          }
+        }
+
+        function removeInteractionListeners() {
+          document.removeEventListener(
+            "pointerdown",
+            startAfterInteraction,
+            true
+          );
+
+          document.removeEventListener(
+            "keydown",
+            startAfterInteraction,
+            true
+          );
+        }
+
+        function startAfterInteraction() {
+          audio.play()
+            .then(() => {
+              removeInteractionListeners();
+            })
+            .catch(() => {
+              // اگر مرورگر هنوز اجازه نداد، تلاش بعدی انجام می‌شود.
+            });
+        }
+
+        function startMusic() {
+          audio.play()
+            .then(() => {
+              removeInteractionListeners();
+            })
+            .catch(() => {
+              // منتظر اولین تعامل واقعی کاربر می‌مانیم.
+            });
+        }
+
+        function handleMusicButton(event: MouseEvent) {
+          const target = event.target;
+
+          if (!(target instanceof Element)) return;
+
+          const button = target.closest("#music-toggle");
+
+          if (!button) return;
+
+          audio.muted = !audio.muted;
+
+          if (audio.paused) {
+            startMusic();
+          }
+
+          updateMusicButton();
+        }
+
+        document.addEventListener(
+          "pointerdown",
+          startAfterInteraction,
+          true
+        );
+
+        document.addEventListener(
+          "keydown",
+          startAfterInteraction,
+          true
+        );
+
+        document.addEventListener("click", handleMusicButton);
+
+        document.addEventListener("astro:page-load", () => {
+          updateMusicButton();
+        });
+
+        updateMusicButton();
+
+        // تلاش برای شروع خودکار موسیقی
+        startMusic();
+      }
+    </script>
 
     <style is:global>
       :root {
@@ -133,6 +327,64 @@ const fullTitle = title.includes("ریاضی‌باز")
       :focus-visible {
         outline: 3px solid var(--color-primary);
         outline-offset: 4px;
+      }
+
+      /* Floating Music Button */
+
+      .music-widget {
+        position: fixed;
+        left: max(22px, env(safe-area-inset-left));
+        bottom: max(22px, env(safe-area-inset-bottom));
+        z-index: 9999;
+        pointer-events: none;
+      }
+
+      .music-toggle {
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #d8ff3e55;
+        border-radius: 50%;
+        background: #191e3b;
+        color: var(--color-primary);
+        box-shadow: 0 5px 22px #00000045;
+        cursor: pointer;
+        pointer-events: auto;
+        transition:
+          transform 0.25s ease,
+          background 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .music-toggle:hover {
+        transform: translateY(-3px);
+        background: #252d50;
+        box-shadow: 0 8px 25px #00000055;
+      }
+
+      .music-icon {
+        width: 23px;
+        height: 23px;
+      }
+
+      .music-toggle:focus-visible {
+        outline: 3px solid var(--color-primary);
+        outline-offset: 4px;
+      }
+
+      @media (max-width: 600px) {
+        .music-widget {
+          left: max(16px, env(safe-area-inset-left));
+          bottom: max(16px, env(safe-area-inset-bottom));
+        }
+
+        .music-toggle {
+          width: 48px;
+          height: 48px;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
