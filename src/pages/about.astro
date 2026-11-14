@@ -55,13 +55,33 @@ const principles = [
       "با تمرین هدفمند و مثال‌های متنوع، اعتمادبه‌نفس و مهارت حل مسئله تقویت می‌شود.",
   },
 ];
+
+const teacherSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "الهه گرامی",
+  jobTitle: "مدرس ریاضی",
+  description:
+    "مدرس ریاضی پایه‌های اول تا نهم، فارغ‌التحصیل رشته ریاضی کاربردی، با تجربه تدریس در آموزش‌وپرورش و کلاس‌های خصوصی.",
+  knowsAbout: [
+    "آموزش ریاضی",
+    "یادگیری مفهومی ریاضی",
+    "حل مسئله",
+    "آموزش ریاضی پایه اول تا نهم",
+  ],
+  url: Astro.url.href,
+};
+
+const teacherSchemaJson = JSON.stringify(teacherSchema).replace(/</g, "\\u003c");
 ---
 
 <BaseLayout
-  title="درباره الهه گرامی | ریاضی‌باز"
+  title="الهه گرامی | مدرس ریاضی پایه اول تا نهم | ریاضی‌باز"
   description="با الهه گرامی، مدرس ریاضی و فارغ‌التحصیل ریاضی کاربردی آشنا شوید. آشنایی با سوابق تدریس، روش آموزش و کلاس‌های ریاضی پایه‌های اول تا نهم."
   canonical="/about/"
 >
+  <script type="application/ld+json" set:html={teacherSchemaJson} />
+
   <main class="about-page">
     <header class="site-header">
       <a class="brand" href={base}>
@@ -72,7 +92,7 @@ const principles = [
       <nav class="desktop-nav" aria-label="منوی اصلی">
         <a href={base}>صفحه اصلی</a>
         <a class="active" href={`${base}about/`}>درباره من</a>
-        <a href={`${base}#articles`}>مقاله‌ها</a>
+        <a href={`${base}articles/`}>مقاله‌ها</a>
       </nav>
 
       <a class="header-cta" href="#contact-details">
