@@ -24,6 +24,25 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
   month: "long",
   day: "numeric",
 });
+
+const resolveCoverPath = (path: string) => {
+  if (/^(https?:|data:|blob:)/i.test(path)) {
+    return path;
+  }
+
+  const basePath = base.endsWith("/") ? base : `${base}/`;
+  const cleanPath = path.replace(/^\/+/, "");
+  const cleanBase = basePath.replace(/^\/|\/$/g, "");
+
+  if (
+    cleanBase &&
+    (cleanPath === cleanBase || cleanPath.startsWith(`${cleanBase}/`))
+  ) {
+    return `/${cleanPath}`;
+  }
+
+  return `${basePath}${cleanPath}`;
+};
 ---
 
 <BaseLayout
@@ -38,7 +57,7 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
         <span>ریاضی‌باز</span>
       </a>
 
-      <nav>
+      <nav aria-label="منوی اصلی">
         <a href={base}>صفحه اصلی</a>
         <a href={`${base}about/`}>درباره من</a>
         <a class="active" href={`${base}articles/`}>مقاله‌ها</a>
@@ -55,14 +74,17 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
       <div class="hero-decoration decoration-three">✦</div>
 
       <span class="eyebrow"><span></span> MATH KNOWLEDGE HUB</span>
+
       <h1>
         دنیای ریاضی،
         <br />
         پر از <span>کشف‌های تازه</span> است!
       </h1>
+
       <p>
         اینجا درباره یادگیری بهتر ریاضی، روش‌های مطالعه و چالش‌های دانش‌آموزان
-        صحبت می‌کنیم. شاید جواب سؤال بعدی تو همین‌جا باشد!
+        صحبت می‌کنیم. در مقاله‌های آموزش ریاضی، شاید جواب سؤال بعدی تو همین‌جا
+        باشد!
       </p>
 
       <div class="article-count">
@@ -77,6 +99,7 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
           <span class="eyebrow"><span></span> EXPLORE ARTICLES</span>
           <h2>کتابخانه <span>یادگیری</span></h2>
         </div>
+
         <p>موضوع مورد علاقه‌ات را انتخاب کن و شروع به خواندن کن.</p>
       </div>
 
@@ -108,25 +131,27 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
                 <div class={`card-art art-${index % 3}`}>
                   {article.data.cover ? (
                     <img
-                      src={
-                        article.data.cover.startsWith("/")
-                          ? `${base}${article.data.cover.slice(1)}`
-                          : article.data.cover
-                      }
+                      src={resolveCoverPath(article.data.cover)}
                       alt={article.data.title}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <span class="art-symbol">
                       {index % 3 === 0 ? "∑" : index % 3 === 1 ? "π" : "√"}
                     </span>
                   )}
+
                   <span class="art-category">{article.data.category}</span>
                 </div>
 
                 <div class="card-content">
-                  <span class="card-date">
+                  <time
+                    class="card-date"
+                    datetime={article.data.pubDate.toISOString()}
+                  >
                     {dateFormatter.format(article.data.pubDate)}
-                  </span>
+                  </time>
 
                   <h3>{article.data.title}</h3>
                   <p>{article.data.description}</p>
@@ -166,6 +191,7 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
         <span class="brand-icon">∑</span>
         <span>ریاضی‌باز</span>
       </a>
+
       <p>یادگیری ریاضی، یک ماجراجویی تازه!</p>
       <span>© ریاضی‌باز</span>
     </footer>
@@ -173,42 +199,52 @@ const dateFormatter = new Intl.DateTimeFormat("fa-IR", {
 </BaseLayout>
 
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>(
-    ".category-button"
-  );
+  function initArticleFilters() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(
+      ".category-button"
+    );
 
-  const cards = document.querySelectorAll<HTMLElement>(".article-card");
-  const noResults = document.querySelector<HTMLElement>("#no-results");
+    const cards = document.querySelectorAll<HTMLElement>(".article-card");
+    const noResults = document.querySelector<HTMLElement>("#no-results");
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const selectedCategory = button.dataset.category;
+    buttons.forEach((button) => {
+      // جلوگیری از ثبت چندباره رویدادها
+      if (button.dataset.initialized === "true") return;
+      button.dataset.initialized = "true";
 
-      buttons.forEach((item) => {
-        item.classList.remove("selected");
-        item.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        const selectedCategory = button.dataset.category;
+
+        buttons.forEach((item) => {
+          item.classList.remove("selected");
+          item.setAttribute("aria-pressed", "false");
+        });
+
+        button.classList.add("selected");
+        button.setAttribute("aria-pressed", "true");
+
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const matches =
+            selectedCategory === "همه مقاله‌ها" ||
+            card.dataset.category === selectedCategory;
+
+          card.hidden = !matches;
+
+          if (matches) visibleCount++;
+        });
+
+        if (noResults) {
+          noResults.hidden = visibleCount !== 0;
+        }
       });
-
-      button.classList.add("selected");
-      button.setAttribute("aria-pressed", "true");
-
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const matches =
-          selectedCategory === "همه مقاله‌ها" ||
-          card.dataset.category === selectedCategory;
-
-        card.hidden = !matches;
-
-        if (matches) visibleCount++;
-      });
-
-      if (noResults) {
-        noResults.hidden = visibleCount !== 0;
-      }
     });
-  });
+  }
+
+  // اجرای اولیه و اجرای مجدد پس از جابه‌جایی بین صفحات
+  initArticleFilters();
+  document.addEventListener("astro:page-load", initArticleFilters);
 </script>
 
 <style>
