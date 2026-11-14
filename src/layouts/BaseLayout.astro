@@ -86,6 +86,7 @@ const base = import.meta.env.BASE_URL;
       <audio
         id="site-background-audio"
         src={`${base}audio/background-music.mp3`}
+        autoplay
         loop
         preload="auto"
         playsinline
@@ -153,12 +154,15 @@ const base = import.meta.env.BASE_URL;
 
         player.dataset.musicInitialized = "true";
 
-        // Default music settings
+        // Default settings
         player.volume = 0.05;
         player.loop = true;
         player.muted = false;
+        player.autoplay = true;
 
-        // Update button appearance
+        let playRequest: Promise<void> | null = null;
+
+        // Update mute button appearance
         function updateMusicButton() {
           const button = document.getElementById("music-toggle");
 
@@ -197,51 +201,35 @@ const base = import.meta.env.BASE_URL;
           }
         }
 
-        // Remove retry listeners after successful playback
-        function removeInteractionListeners() {
-          document.removeEventListener(
-            "pointerdown",
-            startAfterInteraction,
-            true
-          );
-
-          document.removeEventListener(
-            "keydown",
-            startAfterInteraction,
-            true
-          );
-        }
-
-        // Start music
+        // Start playback when the audio is ready
         function startMusic() {
-          if (!player.paused) return;
+          if (!player.paused || playRequest) return;
 
-          player.play()
+          playRequest = player.play();
+
+          playRequest
             .then(() => {
-              removeInteractionListeners();
               updateMusicButton();
             })
-            .catch(() => {
-              // Autoplay may be blocked.
-              // Wait for user interaction.
+            .catch((error: unknown) => {
+              console.warn("Background music could not start:", error);
+            })
+            .finally(() => {
+              playRequest = null;
             });
         }
 
-        // Retry playback after interaction outside the music button
-        function startAfterInteraction(event: Event) {
-          const target = event.target;
+        // Try playback when audio data becomes available
+        player.addEventListener("loadeddata", startMusic);
+        player.addEventListener("canplay", startMusic);
+        player.addEventListener("canplaythrough", startMusic);
 
-          if (
-            target instanceof Element &&
-            target.closest("#music-toggle")
-          ) {
-            return;
-          }
-
+        // Also try immediately if audio is already ready
+        if (player.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
           startMusic();
         }
 
-        // Handle music button clicks
+        // Mute / Unmute only
         function handleMusicButton(event: MouseEvent) {
           const target = event.target;
 
@@ -253,49 +241,22 @@ const base = import.meta.env.BASE_URL;
 
           event.preventDefault();
 
-          // If music is stopped, the first click only starts playback
-          if (player.paused) {
-            player.muted = false;
-            startMusic();
-            updateMusicButton();
-            return;
-          }
-
-          // Toggle mute without stopping playback
           player.muted = !player.muted;
 
           updateMusicButton();
         }
 
-        // Listen for user interactions
-        document.addEventListener(
-          "pointerdown",
-          startAfterInteraction,
-          true
-        );
-
-        document.addEventListener(
-          "keydown",
-          startAfterInteraction,
-          true
-        );
-
-        // Delegated click listener survives page transitions
         document.addEventListener(
           "click",
           handleMusicButton
         );
 
-        // Synchronize button after Astro navigation
         document.addEventListener(
           "astro:page-load",
           updateMusicButton
         );
 
         updateMusicButton();
-
-        // Attempt automatic playback
-        startMusic();
       }
     </script>
 
