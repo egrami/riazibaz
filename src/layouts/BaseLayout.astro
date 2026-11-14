@@ -86,7 +86,6 @@ const base = import.meta.env.BASE_URL;
       <audio
         id="site-background-audio"
         src={`${base}audio/background-music.mp3`}
-        autoplay
         loop
         preload="auto"
         playsinline
@@ -145,11 +144,13 @@ const base = import.meta.env.BASE_URL;
 
     <!-- Music Player Script -->
     <script>
-      const player = document.getElementById(
+      const playerElement = document.getElementById(
         "site-background-audio"
       ) as HTMLAudioElement | null;
 
-      if (player && !player.dataset.musicInitialized) {
+      if (playerElement && !playerElement.dataset.musicInitialized) {
+        const player = playerElement;
+
         player.dataset.musicInitialized = "true";
 
         // Default music settings
@@ -196,7 +197,7 @@ const base = import.meta.env.BASE_URL;
           }
         }
 
-        // Remove autoplay retry listeners after successful playback
+        // Remove retry listeners after successful playback
         function removeInteractionListeners() {
           document.removeEventListener(
             "pointerdown",
@@ -211,7 +212,7 @@ const base = import.meta.env.BASE_URL;
           );
         }
 
-        // Attempt to start playback
+        // Start music
         function startMusic() {
           if (!player.paused) return;
 
@@ -221,12 +222,12 @@ const base = import.meta.env.BASE_URL;
               updateMusicButton();
             })
             .catch(() => {
-              // Autoplay may be blocked by the browser.
-              // Wait for a user interaction.
+              // Autoplay may be blocked.
+              // Wait for user interaction.
             });
         }
 
-        // Retry playback after user interaction outside the music button
+        // Retry playback after interaction outside the music button
         function startAfterInteraction(event: Event) {
           const target = event.target;
 
@@ -252,8 +253,7 @@ const base = import.meta.env.BASE_URL;
 
           event.preventDefault();
 
-          // If music has not started, the first click only starts playback.
-          // It must not mute the audio at the same time.
+          // If music is stopped, the first click only starts playback
           if (player.paused) {
             player.muted = false;
             startMusic();
@@ -261,8 +261,7 @@ const base = import.meta.env.BASE_URL;
             return;
           }
 
-          // If music is already playing, toggle mute only.
-          // Playback continues and the audio timestamp remains unchanged.
+          // Toggle mute without stopping playback
           player.muted = !player.muted;
 
           updateMusicButton();
@@ -287,16 +286,15 @@ const base = import.meta.env.BASE_URL;
           handleMusicButton
         );
 
-        // Keep the button synchronized after Astro navigation
+        // Synchronize button after Astro navigation
         document.addEventListener(
           "astro:page-load",
           updateMusicButton
         );
 
-        // Update button initially
         updateMusicButton();
 
-        // Try autoplay when the page opens
+        // Attempt automatic playback
         startMusic();
       }
     </script>
