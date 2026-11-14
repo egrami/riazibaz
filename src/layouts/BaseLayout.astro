@@ -17,6 +17,7 @@ const {
 } = Astro.props;
 
 const siteUrl = "https://egrami.github.io/riazibaz";
+
 const pageUrl = canonical
   ? new URL(canonical, siteUrl + "/").href
   : Astro.url.href;
@@ -36,10 +37,13 @@ const base = import.meta.env.BASE_URL;
     <meta name="theme-color" content="#10142c" />
 
     <title>{fullTitle}</title>
+
     <meta name="description" content={description} />
     <link rel="canonical" href={pageUrl} />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && (
+      <meta name="robots" content="noindex, nofollow" />
+    )}
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fa_IR" />
@@ -55,7 +59,11 @@ const base = import.meta.env.BASE_URL;
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap"
@@ -114,6 +122,7 @@ const base = import.meta.env.BASE_URL;
               stroke-width="1.8"
               stroke-linecap="round"
             />
+
             <path
               d="M18.5 5.5C22 9 22 15 18.5 18.5"
               stroke="currentColor"
@@ -134,49 +143,68 @@ const base = import.meta.env.BASE_URL;
       </button>
     </div>
 
+    <!-- Music Player Script -->
     <script>
       const audio = document.getElementById(
         "site-background-audio"
       ) as HTMLAudioElement | null;
 
-      if (audio) {
-        audio.volume = 0.3;
-        audio.loop = true;
-        audio.muted = false;
+      const musicButton = document.getElementById("music-toggle");
 
-        const toggleButton = document.getElementById("music-toggle");
+      if (audio && musicButton) {
+        const player = audio;
+        const button = musicButton;
 
+        // Default music settings
+        player.volume = 0.3;
+        player.loop = true;
+        player.muted = false;
+
+        // Update mute button appearance
         function updateMusicButton() {
-          const button = document.getElementById("music-toggle");
+          const isMuted = player.muted;
 
-          if (!button || !audio) return;
-
-          const isMuted = audio.muted;
-
-          button.setAttribute("aria-pressed", String(isMuted));
+          button.setAttribute(
+            "aria-pressed",
+            String(isMuted)
+          );
 
           button.setAttribute(
             "aria-label",
-            isMuted ? "فعال کردن صدای موسیقی" : "قطع صدای موسیقی"
+            isMuted
+              ? "فعال کردن صدای موسیقی"
+              : "قطع صدای موسیقی"
           );
 
           button.setAttribute(
             "title",
-            isMuted ? "فعال کردن صدای موسیقی" : "قطع صدای موسیقی"
+            isMuted
+              ? "فعال کردن صدای موسیقی"
+              : "قطع صدای موسیقی"
           );
 
-          const soundWaves = button.querySelector(".sound-waves");
-          const muteLine = button.querySelector(".mute-line");
+          const soundWaves = button.querySelector(
+            ".sound-waves"
+          );
+
+          const muteLine = button.querySelector(
+            ".mute-line"
+          );
 
           if (soundWaves instanceof SVGElement) {
-            soundWaves.style.display = isMuted ? "none" : "block";
+            soundWaves.style.display = isMuted
+              ? "none"
+              : "block";
           }
 
           if (muteLine instanceof SVGElement) {
-            muteLine.style.display = isMuted ? "block" : "none";
+            muteLine.style.display = isMuted
+              ? "block"
+              : "none";
           }
         }
 
+        // Remove autoplay retry listeners after playback starts
         function removeInteractionListeners() {
           document.removeEventListener(
             "pointerdown",
@@ -191,44 +219,41 @@ const base = import.meta.env.BASE_URL;
           );
         }
 
+        // Retry playback after the first user interaction
         function startAfterInteraction() {
-          audio.play()
+          player.play()
             .then(() => {
               removeInteractionListeners();
             })
             .catch(() => {
-              // اگر مرورگر هنوز اجازه نداد، تلاش بعدی انجام می‌شود.
+              // Wait for another user interaction.
             });
         }
 
+        // Initial autoplay attempt
         function startMusic() {
-          audio.play()
+          player.play()
             .then(() => {
               removeInteractionListeners();
             })
             .catch(() => {
-              // منتظر اولین تعامل واقعی کاربر می‌مانیم.
+              // The browser may block autoplay.
+              // Playback will be retried after user interaction.
             });
         }
 
-        function handleMusicButton(event: MouseEvent) {
-          const target = event.target;
+        // Mute / Unmute button
+        button.addEventListener("click", () => {
+          player.muted = !player.muted;
 
-          if (!(target instanceof Element)) return;
-
-          const button = target.closest("#music-toggle");
-
-          if (!button) return;
-
-          audio.muted = !audio.muted;
-
-          if (audio.paused) {
+          if (player.paused) {
             startMusic();
           }
 
           updateMusicButton();
-        }
+        });
 
+        // Listen for the first user interaction
         document.addEventListener(
           "pointerdown",
           startAfterInteraction,
@@ -241,15 +266,15 @@ const base = import.meta.env.BASE_URL;
           true
         );
 
-        document.addEventListener("click", handleMusicButton);
-
-        document.addEventListener("astro:page-load", () => {
-          updateMusicButton();
-        });
+        // Keep button appearance synchronized after navigation
+        document.addEventListener(
+          "astro:page-load",
+          updateMusicButton
+        );
 
         updateMusicButton();
 
-        // تلاش برای شروع خودکار موسیقی
+        // Try to start music immediately
         startMusic();
       }
     </script>
@@ -343,16 +368,22 @@ const base = import.meta.env.BASE_URL;
         width: 52px;
         height: 52px;
         padding: 0;
+
         display: flex;
         align-items: center;
         justify-content: center;
+
         border: 1px solid #d8ff3e55;
         border-radius: 50%;
+
         background: #191e3b;
         color: var(--color-primary);
+
         box-shadow: 0 5px 22px #00000045;
+
         cursor: pointer;
         pointer-events: auto;
+
         transition:
           transform 0.25s ease,
           background 0.25s ease,
