@@ -145,23 +145,24 @@ const base = import.meta.env.BASE_URL;
 
     <!-- Music Player Script -->
     <script>
-      const audio = document.getElementById(
+      const player = document.getElementById(
         "site-background-audio"
       ) as HTMLAudioElement | null;
 
-      const musicButton = document.getElementById("music-toggle");
-
-      if (audio && musicButton) {
-        const player = audio;
-        const button = musicButton;
+      if (player && !player.dataset.musicInitialized) {
+        player.dataset.musicInitialized = "true";
 
         // Default music settings
         player.volume = 0.05;
         player.loop = true;
         player.muted = false;
 
-        // Update mute button appearance
+        // Update button appearance
         function updateMusicButton() {
+          const button = document.getElementById("music-toggle");
+
+          if (!button) return;
+
           const isMuted = player.muted;
 
           button.setAttribute(
@@ -183,28 +184,19 @@ const base = import.meta.env.BASE_URL;
               : "قطع صدای موسیقی"
           );
 
-          const soundWaves = button.querySelector(
-            ".sound-waves"
-          );
-
-          const muteLine = button.querySelector(
-            ".mute-line"
-          );
+          const soundWaves = button.querySelector(".sound-waves");
+          const muteLine = button.querySelector(".mute-line");
 
           if (soundWaves instanceof SVGElement) {
-            soundWaves.style.display = isMuted
-              ? "none"
-              : "block";
+            soundWaves.style.display = isMuted ? "none" : "block";
           }
 
           if (muteLine instanceof SVGElement) {
-            muteLine.style.display = isMuted
-              ? "block"
-              : "none";
+            muteLine.style.display = isMuted ? "block" : "none";
           }
         }
 
-        // Remove autoplay retry listeners after playback starts
+        // Remove autoplay retry listeners after successful playback
         function removeInteractionListeners() {
           document.removeEventListener(
             "pointerdown",
@@ -219,41 +211,64 @@ const base = import.meta.env.BASE_URL;
           );
         }
 
-        // Retry playback after the first user interaction
-        function startAfterInteraction() {
-          player.play()
-            .then(() => {
-              removeInteractionListeners();
-            })
-            .catch(() => {
-              // Wait for another user interaction.
-            });
-        }
-
-        // Initial autoplay attempt
+        // Attempt to start playback
         function startMusic() {
+          if (!player.paused) return;
+
           player.play()
             .then(() => {
               removeInteractionListeners();
+              updateMusicButton();
             })
             .catch(() => {
-              // The browser may block autoplay.
-              // Playback will be retried after user interaction.
+              // Autoplay may be blocked by the browser.
+              // Wait for a user interaction.
             });
         }
 
-        // Mute / Unmute button
-        button.addEventListener("click", () => {
-          player.muted = !player.muted;
+        // Retry playback after user interaction outside the music button
+        function startAfterInteraction(event: Event) {
+          const target = event.target;
 
-          if (player.paused) {
-            startMusic();
+          if (
+            target instanceof Element &&
+            target.closest("#music-toggle")
+          ) {
+            return;
           }
 
-          updateMusicButton();
-        });
+          startMusic();
+        }
 
-        // Listen for the first user interaction
+        // Handle music button clicks
+        function handleMusicButton(event: MouseEvent) {
+          const target = event.target;
+
+          if (!(target instanceof Element)) return;
+
+          const button = target.closest("#music-toggle");
+
+          if (!button) return;
+
+          event.preventDefault();
+
+          // If music has not started, the first click only starts playback.
+          // It must not mute the audio at the same time.
+          if (player.paused) {
+            player.muted = false;
+            startMusic();
+            updateMusicButton();
+            return;
+          }
+
+          // If music is already playing, toggle mute only.
+          // Playback continues and the audio timestamp remains unchanged.
+          player.muted = !player.muted;
+
+          updateMusicButton();
+        }
+
+        // Listen for user interactions
         document.addEventListener(
           "pointerdown",
           startAfterInteraction,
@@ -266,15 +281,22 @@ const base = import.meta.env.BASE_URL;
           true
         );
 
-        // Keep button appearance synchronized after navigation
+        // Delegated click listener survives page transitions
+        document.addEventListener(
+          "click",
+          handleMusicButton
+        );
+
+        // Keep the button synchronized after Astro navigation
         document.addEventListener(
           "astro:page-load",
           updateMusicButton
         );
 
+        // Update button initially
         updateMusicButton();
 
-        // Try to start music immediately
+        // Try autoplay when the page opens
         startMusic();
       }
     </script>
