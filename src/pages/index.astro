@@ -43,7 +43,6 @@ const articles = (await getCollection("articles"))
   title="آموزش ریاضی پایه اول تا نهم | ریاضی‌باز"
   description="آموزش مفهومی ریاضی پایه اول تا نهم با الهه گرامی؛ آشنایی با روش تدریس، کلاس‌های خصوصی و گروهی و راهکارهای یادگیری بهتر ریاضی."
 >
-
   <div class="site-shell">
     <header class="header">
       <a href={base} class="brand" aria-label="صفحه اصلی ریاضی‌باز">
@@ -273,20 +272,33 @@ const articles = (await getCollection("articles"))
   </div>
 
   <script>
-    const menuButton = document.querySelector(".menu-toggle");
-    const navigation = document.querySelector(".navigation");
+    document.addEventListener("click", (event) => {
+      const target = event.target;
 
-    menuButton?.addEventListener("click", () => {
-      const isOpen = menuButton.getAttribute("aria-expanded") === "true";
-      menuButton.setAttribute("aria-expanded", String(!isOpen));
-      navigation?.classList.toggle("nav-open", !isOpen);
-    });
+      if (!(target instanceof Element)) return;
 
-    navigation?.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
+      const menuButton = target.closest(".menu-toggle");
+      const navigation = document.querySelector(".navigation");
+      const currentButton = document.querySelector(".menu-toggle");
+
+      // باز و بسته کردن منوی موبایل
+      if (menuButton && currentButton && navigation) {
+        const isOpen =
+          currentButton.getAttribute("aria-expanded") === "true";
+
+        currentButton.setAttribute("aria-expanded", String(!isOpen));
+        navigation.classList.toggle("nav-open", !isOpen);
+
+        return;
+      }
+
+      // بستن منو پس از انتخاب یکی از لینک‌ها
+      const navLink = target.closest(".navigation a");
+
+      if (navLink && navigation && currentButton) {
         navigation.classList.remove("nav-open");
-        menuButton?.setAttribute("aria-expanded", "false");
-      });
+        currentButton.setAttribute("aria-expanded", "false");
+      }
     });
   </script>
 
