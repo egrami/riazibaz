@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /riazibaz/
+
+Sitemap: https://egrami.github.io/riazibaz/sitemap-index.xml
